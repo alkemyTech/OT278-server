@@ -1,6 +1,8 @@
 package com.alkemy.ong.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -11,6 +13,8 @@ import java.time.LocalDateTime;
 @Table(name = "roles")
 @Getter
 @Setter
+@RequiredArgsConstructor
+@NoArgsConstructor
 public class Role {
 
     @Id
