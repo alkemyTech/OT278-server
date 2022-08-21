@@ -7,12 +7,14 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Table;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity
@@ -34,7 +36,8 @@ public class Category {
 
     private String image;
 
-    private LocalDateTime creationDate = LocalDateTime.now();
+    @CreatedDate
+    private Timestamp timestamp;
 
     private boolean deleted = Boolean.FALSE;
 
