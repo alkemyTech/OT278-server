@@ -1,9 +1,8 @@
 package com.alkemy.ong.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -13,7 +12,7 @@ import java.time.LocalDateTime;
 @Table(name = "roles")
 @Getter
 @Setter
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 public class Role {
 
@@ -21,11 +20,17 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @NotNull(message = "Name cannot be null")
     private String name;
 
     private String description;
 
+    @CreationTimestamp
+    @Column(name = "creation_date", updatable = false)
     private LocalDateTime creationDate = LocalDateTime.now();
+
+    @UpdateTimestamp
+    @Column(name = "update_date")
+    private LocalDateTime updateDate;
 
 }
