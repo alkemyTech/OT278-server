@@ -1,9 +1,10 @@
-package com.alkemy.ong.service;
+package com.alkemy.ong.service.impl;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.sendgrid.Method;
+import com.alkemy.ong.service.IEmailService;
+import static com.sendgrid.Method.POST;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
 import com.sendgrid.SendGrid;
@@ -15,9 +16,12 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class EmailService {
+public class EmailServiceImpl implements IEmailService {
 
     private final SendGrid sendGrid;
+    private Response response;
+    private Request request;
+    private final static String ENDPOINT = "mail/send";
 
     @Value("${sendgrid.organization.email}")
     private final String FROM;
@@ -31,31 +35,25 @@ public class EmailService {
     @Value("${sendgrid.organization.body}")
     private final String BODY;
 
-    public String sendEmail(String toEmail, String endPoint, Method method) {
+    @Override
+    public Response sendEmail(String toEmail) {
         Mail mail = new Mail(new Email(FROM),
                 SUBJECT,
                 new Email(toEmail),
-                new Content(TYPE, BODY));
-
-        Request request = new Request();
-        Response response = null;
+                new Content(TYPE, BODY));        
 
         try {
 
-            request.setMethod(method);
-            request.setEndpoint(endPoint);
+            request.setMethod(POST);
+            request.setEndpoint(ENDPOINT);
             request.setBody(mail.build());
 
             response = sendGrid.api(request);
 
         } catch (Exception e) {
-            throw new RuntimeException("Error sending email via SendGrid to " + toEmail + ": " + response);
+            throw new RuntimeException("Error sending email via SendGrid to " + toEmail + ": " + e.getMessage());
         }
 
-        // TODO: <- return Response or String?
-        return (response.getStatusCode() == 200 || response.getStatusCode() == 202) 
-                ? "Email has been sent successfully, please check your inbox"
-                : "Error sending email. Code: " + response.getStatusCode();
+        return response;
     }
-
 }
