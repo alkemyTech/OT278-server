@@ -12,6 +12,7 @@ import org.hibernate.annotations.Where;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,10 +29,16 @@ public class Contact {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "Phone cannot be null")
-    private int phone;
+    @NotNull(message = "Field name cannot be null")
+    private String name;
 
-    @Email(message = "Email cannot be null")
+    @Pattern(regexp = "^(\\+?\\d{1,3})?(\\d{10})$", message = "The number phone es invalid")
+    @NotNull(message = "Phone cannot be null")
+    private String phone;
+
+    @Email(regexp = "^[a-zA-Z]+((\\.|_)*[a-zA-Z0-9]+)*((\\.|_)[a-zA-Z0-9]+)*@[a-z]+\\.\\w\\w\\w(\\.\\w\\w)?$",
+            message = "The email is invalid")
+    @NotNull(message = "Field email cannot be null")
     private String email;
 
     private String message;
