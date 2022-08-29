@@ -1,5 +1,6 @@
 package com.alkemy.ong.service.impl;
 
+import com.alkemy.ong.utils.MailUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -23,17 +24,17 @@ public class EmailServiceImpl implements IEmailService {
     private Request request;
     private final static String ENDPOINT = "mail/send";
 
-    @Value("${sendgrid.organization.email}")
-    private final String FROM;
+    //@Value("${sendgrid.organization.email}")
+    private final String FROM = "prueba@hotmail.com";
 
-    @Value("${sendgrid.organization.subject}")
-    private final String SUBJECT;
+    //@Value("${sendgrid.organization.subject}")
+    private final String SUBJECT ="Welcome";
 
-    @Value("${sendgrid.organization.type}")
-    private final String TYPE;
+    //@Value("${sendgrid.organization.type}")
+    private final String TYPE = MailUtils.TYPE;
 
-    @Value("${sendgrid.organization.body}")
-    private final String BODY;
+    //@Value("${sendgrid.organization.body}")
+    private final String BODY = MailUtils.TEMPLATE;
 
     @Override
     public Response sendEmail(String toEmail) {
