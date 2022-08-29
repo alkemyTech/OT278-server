@@ -2,7 +2,7 @@ package com.alkemy.ong.security.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import com.alkemy.ong.model.Role;
+import com.alkemy.ong.security.model.Role;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
