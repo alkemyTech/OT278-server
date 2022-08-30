@@ -17,8 +17,6 @@ public class CategoryMapper {
         
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());
-        entity.setCreationTimestamp(Timestamp.valueOf(LocalDateTime.now()));
-        entity.setUpdateTimeStamp(Timestamp.valueOf(LocalDateTime.now()));
 
         return entity;
     }
