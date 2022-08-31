@@ -30,9 +30,6 @@ public class UserController {
     @PatchMapping("/users/{id}")
     public ResponseEntity<UserResponseDto> update(@Valid @RequestBody UserRequestDto user, @PathVariable Long id) throws Exception{
         UserResponseDto userResponseDto = service.update(user,id);
-        if (userResponseDto == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
         return ResponseEntity.status(HttpStatus.OK).body(userResponseDto);
     }
 
