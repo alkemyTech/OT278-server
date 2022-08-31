@@ -1,8 +1,5 @@
 package com.alkemy.ong.mapper;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-
 import org.springframework.stereotype.Component;
 
 import com.alkemy.ong.dto.category.CategoryRequestDto;

@@ -13,9 +13,12 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CategoryRequestDto {
 
-    @NotBlank(message = "Body can't be null or empty")
+    @NotBlank(message = "Name can't be null or empty")
     private String name;
     
     private String description;
-    
+
+    private String image;
+
 }
+

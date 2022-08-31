@@ -7,7 +7,6 @@ import java.util.Locale;
 
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.alkemy.ong.dto.category.CategoryRequestDto;
 import com.alkemy.ong.dto.category.CategoryResponseDto;
@@ -29,7 +28,7 @@ public class CategoryServiceImpl implements ICategoryService{
     private final CategoryMapper mapper;
 
     @Override
-    public CategoryResponseDto create(CategoryRequestDto dto, MultipartFile image) {
+    public CategoryResponseDto create(CategoryRequestDto dto) {
         List<Category> categories = categoryRepository.findAll();
         
         categories.forEach(c -> {
@@ -44,9 +43,10 @@ public class CategoryServiceImpl implements ICategoryService{
 
         /*
             TODO: <- ImageService should validate and return the path of the File...
-            category.setImage(imageService.getImage(image));
+            example:
+            category.setImage(imageService.getImage(dto.getImage()));
         */
-        category.setImage("image-example.png");    
+        category.setImage(dto.getImage());    
         
         Category categorySaved = categoryRepository.save(category);
        
