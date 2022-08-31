@@ -1,9 +1,7 @@
 package com.alkemy.ong.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import com.alkemy.ong.security.model.User;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -12,7 +10,7 @@ import javax.validation.constraints.NotNull;
 @Table(name = "comments")
 @Getter
 @Setter
-@RequiredArgsConstructor
+@NoArgsConstructor
 @AllArgsConstructor
 public class Comment {
 
