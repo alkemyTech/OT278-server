@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
@@ -15,11 +15,11 @@ public class TestimonialDto {
 
     private long id;
 
-    @NotNull(message = "Name cannot be null")
+    @NotBlank(message = "Name cannot be empty")
     private String name;
 
     private String image;
 
-    @NotNull(message = "Content cannot be empty")
+    @NotBlank(message = "Content cannot be empty")
     private String content;
 }
