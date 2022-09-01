@@ -33,7 +33,7 @@ public class CategoryServiceImpl implements ICategoryService{
         
         categories.forEach(c -> {
             if(c.getName().equalsIgnoreCase(dto.getName())){
-                throw new AlreadyExistsException(messageSource.getMessage("category.already-exists", null, Locale.US));
+                throw new AlreadyExistsException(messageSource.getMessage("already-exists", new Object[] {"Category name"}, Locale.US));
             }});
 
         Category category = mapper.categoryDto2CategoryEntity(dto);
