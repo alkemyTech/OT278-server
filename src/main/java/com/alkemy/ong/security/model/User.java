@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Setter
 @SQLDelete(sql = "UPDATE users SET deleted = true WHERE id=?")
 @Where(clause = "deleted = false")
-@RequiredArgsConstructor
+@NoArgsConstructor
 @AllArgsConstructor
 public class User {
 
