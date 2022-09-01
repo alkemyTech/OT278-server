@@ -30,10 +30,9 @@ public class HandlerExceptionController {
         return new CustomExceptionDetails(exception, request.getRequestURI());
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler({Exception.class})
+    @ResponseStatus(CONFLICT)
+    @ExceptionHandler({UnableToSaveEntityException.class})
     @ResponseBody
-    public CustomExceptionDetails internalErrorException(HttpServletRequest request, Exception exception){
+    public CustomExceptionDetails unableToSaveEntity(HttpServletRequest request, Exception exception){
         return new CustomExceptionDetails(exception, request.getRequestURI());
     }
-}
