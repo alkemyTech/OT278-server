@@ -1,13 +1,18 @@
 package com.alkemy.ong.security.auth;
 
 
-import com.alkemy.ong.exception.AlreadyExistsException;
 import com.alkemy.ong.exception.NotFoundException;
-import com.alkemy.ong.security.dto.*;
-import com.alkemy.ong.security.mapper.UserMapper;
-import com.alkemy.ong.security.jwt.JwtUtils;
 import com.alkemy.ong.security.model.User;
 import com.alkemy.ong.security.repository.UserRepository;
+
+import com.alkemy.ong.security.dto.AuthenticationRequest;
+import com.alkemy.ong.security.dto.AuthenticationResponse;
+import com.alkemy.ong.security.dto.UserRequestDto;
+import com.alkemy.ong.security.dto.UserResponseDto;
+import com.alkemy.ong.security.jwt.JwtUtils;
+import com.alkemy.ong.service.IEmailService;
+import com.alkemy.ong.security.mapper.UserMapper;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -31,6 +36,7 @@ public class UserService {
     private final CustomAuthenticatorManager authenticatorManager;
     private final JwtUtils jwtUtils;
     private final CustomDetailsService userDetailsService;
+    private final IEmailService emailService;
 
     private final MessageSource messageSource;
     public UserResponseDto save(UserRequestDto dto) {
@@ -41,6 +47,7 @@ public class UserService {
         User newUser = userMapper.userRequestDto2UserEntity(dto);
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         newUser = userRepository.save(newUser);
+        emailService.sendEmail(dto.getEmail());
         return userMapper.userEntity2UserResponseDto(newUser);
     }
 

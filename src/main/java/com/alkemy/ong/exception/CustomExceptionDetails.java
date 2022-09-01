@@ -3,7 +3,9 @@ package com.alkemy.ong.exception;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter
+
+@Getter
+@Setter
 public class CustomExceptionDetails {
 
     private String exception;
@@ -19,9 +21,9 @@ public class CustomExceptionDetails {
     @Override
     public String toString() {
         return "{" +
-                " exception='" + getException() + "'" +
-                ", message='" + getMessage() + "'" +
-                ", path='" + getPath() + "'" +
-                "}";
+            " exception='" + getException() + "'" +
+            ", message='" + getMessage() + "'" +
+            ", path='" + getPath() + "'" +
+            "}";
     }
 }
