@@ -13,10 +13,11 @@ import java.util.List;
 public class OrganizationController {
 
     @GetMapping("/public")
-    public ResponseEntity<List<OrganizationPublicDTO>> getOrgPublicData() {
-        List<OrganizationPublicDTO> OrganizationPublicDTO = null;
-        return ResponseEntity.ok().body(OrganizationPublicDTO);
-        //falta Model de Organizacion para continuar con el service/mapper para hacer efectivo
-    }
+     public OrganizationPublicDTO orgDto () {
+        OrganizationPublicDTO getOrgDto  = new OrganizationPublicDTO();
+        return getOrgDto;
+
+    };
+
 
 }
