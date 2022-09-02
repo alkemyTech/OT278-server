@@ -1,11 +1,15 @@
 package com.alkemy.ong.security.model;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> develop
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;

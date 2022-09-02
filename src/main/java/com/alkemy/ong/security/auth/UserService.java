@@ -1,6 +1,5 @@
 package com.alkemy.ong.security.auth;
 
-
 import com.alkemy.ong.exception.NotFoundException;
 import com.alkemy.ong.security.model.User;
 import com.alkemy.ong.security.repository.UserRepository;
@@ -38,8 +37,10 @@ public class UserService {
     private final CustomDetailsService userDetailsService;
     private final IEmailService emailService;
 
+
     private final MessageSource messageSource;
     public UserResponseDto save(UserRequestDto dto) {
+      
         User userCheck = userRepository.findByEmail(dto.getEmail());
         if(userCheck != null)
             throw new BadCredentialsException("Email is already in use");
@@ -47,8 +48,14 @@ public class UserService {
         User newUser = userMapper.userRequestDto2UserEntity(dto);
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         newUser = userRepository.save(newUser);
+
+        UserResponseDto userResponseDto = userMapper.userEntity2UserResponseDto(newUser);
+        AuthenticationRequest authenticationRequest = userMapper.userRequestDto2AuthenticationRequest(dto);
+        AuthenticationResponse token = authenticate(authenticationRequest);
+        userResponseDto.setToken(token.getJwt());
         emailService.sendEmail(dto.getEmail());
-        return userMapper.userEntity2UserResponseDto(newUser);
+        return userResponseDto;
+
     }
 
 
@@ -82,6 +89,7 @@ public class UserService {
         }
     }
 
+
     public UserResponseDto update(UserRequestDto updateDto, Long id){
         if (!userRepository.existsById(id)){
             throw new NotFoundException(messageSource.getMessage("not-found", new Object[]{"User"},Locale.US));
@@ -91,6 +99,5 @@ public class UserService {
         userModified.setPassword(passwordEncoder.encode(userModified.getPassword()));
         return userMapper.userEntity2UserResponseDto(userRepository.save(userModified));
     }
-
 
 }

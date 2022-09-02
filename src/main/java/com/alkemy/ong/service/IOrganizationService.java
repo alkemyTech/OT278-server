@@ -4,5 +4,5 @@ import com.alkemy.ong.dto.OrganizationDto;
 
 public interface IOrganizationService {
 
-    OrganizationDto update(OrganizationDto organizationDto);
+    OrganizationDto update(OrganizationDto organizationDto) throws Exception;
 }
