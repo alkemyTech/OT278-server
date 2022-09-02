@@ -1,6 +1,7 @@
 package com.alkemy.ong.service.impl;
 
 import com.alkemy.ong.dto.OrganizationDto;
+import com.alkemy.ong.dto.OrganizationPublicDTO;
 import com.alkemy.ong.exception.NotFoundException;
 import com.alkemy.ong.mapper.OrganizationMapper;
 import com.alkemy.ong.model.Organization;
@@ -23,7 +24,7 @@ public class OrganizationServiceImpl implements IOrganizationService {
     @Autowired
     private MessageSource messageSource;
 
-    public OrganizationDto update(OrganizationDto edited) throws Exception{
+    public OrganizationDto update(OrganizationDto edited) throws Exception {
         try {
             Optional<Organization> exists = repository.findAll().stream().findFirst();
             if (!exists.isPresent()) {
@@ -33,8 +34,18 @@ public class OrganizationServiceImpl implements IOrganizationService {
             Organization organization = mapper.organizationDto2Entity(edited);
             organization.setId(old.getId());
             return mapper.organizationEntity2Dto(repository.save(organization));
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
+    }
+    @Override
+    public OrganizationPublicDTO getPublicInfo() {
+        Optional<Organization> orgPublicInfo = repository.findAll().stream().findFirst();
+
+        if (orgPublicInfo.isEmpty()) {
+            throw new NotFoundException(messageSource.getMessage("organization.not-found", null, Locale.US));
+        }
+        return mapper.orgEntity2orgPublicDTO(orgPublicInfo);
+
     }
 }
