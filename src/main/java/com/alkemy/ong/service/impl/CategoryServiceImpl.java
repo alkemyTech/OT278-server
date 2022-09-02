@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.alkemy.ong.dto.category.CategoryRequestDto;
 import com.alkemy.ong.dto.category.CategoryResponseDto;
 import com.alkemy.ong.exception.AlreadyExistsException;
+import com.alkemy.ong.exception.ErrorSavingException;
 import com.alkemy.ong.mapper.CategoryMapper;
 import com.alkemy.ong.model.Category;
 import com.alkemy.ong.repository.CategoryRepository;
@@ -18,10 +19,9 @@ import com.alkemy.ong.service.ICategoryService;
 
 import lombok.RequiredArgsConstructor;
 
-
 @Service
 @RequiredArgsConstructor
-public class CategoryServiceImpl implements ICategoryService{
+public class CategoryServiceImpl implements ICategoryService {
 
     private final CategoryRepository categoryRepository;
     private final MessageSource messageSource;
@@ -29,28 +29,37 @@ public class CategoryServiceImpl implements ICategoryService{
 
     @Override
     public CategoryResponseDto create(CategoryRequestDto dto) {
-        List<Category> categories = categoryRepository.findAll();
-        
-        categories.forEach(c -> {
-            if(c.getName().equalsIgnoreCase(dto.getName())){
-                throw new AlreadyExistsException(messageSource.getMessage("already-exists", new Object[] {"Category name"}, Locale.US));
-            }});
+        Category categorySaved;
+        try {
+            List<Category> categories = categoryRepository.findAll();
 
-        Category category = mapper.categoryDto2CategoryEntity(dto);
+            categories.forEach(c -> {
+                if (c.getName().equalsIgnoreCase(dto.getName())) {
+                    throw new AlreadyExistsException(
+                            messageSource.getMessage("already-exists", new Object[] { "Category name" }, Locale.US));
+                }
+            });
 
-        category.setCreationTimestamp(Timestamp.valueOf(LocalDateTime.now()));
-        category.setUpdateTimeStamp(Timestamp.valueOf(LocalDateTime.now()));
+            Category category = mapper.categoryDto2CategoryEntity(dto);
 
-        /*
-            TODO: <- ImageService should validate and return the path of the File...
-            example:
-            category.setImage(imageService.getImage(dto.getImage()));
-        */
-        category.setImage(dto.getImage());    
-        
-        Category categorySaved = categoryRepository.save(category);
-       
+            category.setCreationTimestamp(Timestamp.valueOf(LocalDateTime.now()));
+            category.setUpdateTimeStamp(Timestamp.valueOf(LocalDateTime.now()));
+
+            /*
+             * TODO: <- ImageService should validate and return the path of the File...
+             * example:
+             * category.setImage(imageService.getImage(dto.getImage()));
+             */
+            category.setImage(dto.getImage());
+
+            categorySaved = categoryRepository.save(category);
+        } catch (Exception e) {
+            throw new ErrorSavingException(
+                    messageSource.getMessage("error-saving", new Object[] { "the new Category: " }, Locale.US)
+                    + e.getMessage());
+        }
+
         return mapper.CategoryEntity2CategoryDto(categorySaved);
     }
-    
+
 }

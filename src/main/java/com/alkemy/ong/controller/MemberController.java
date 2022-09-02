@@ -22,7 +22,7 @@ public class MemberController {
 
     private final MemberServiceImpl memberServiceImpl;
     
-    @PostMapping("/new")
+    @PostMapping
     public ResponseEntity<MemberResponseDto> addNewMember(@RequestBody @Valid MemberRequestDto dto){
 
         return ResponseEntity.status(CREATED).body(memberServiceImpl.create(dto));
