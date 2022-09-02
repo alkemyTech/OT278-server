@@ -11,7 +11,8 @@ import org.springframework.stereotype.Service;
 import com.alkemy.ong.dto.category.CategoryRequestDto;
 import com.alkemy.ong.dto.category.CategoryResponseDto;
 import com.alkemy.ong.exception.AlreadyExistsException;
-import com.alkemy.ong.exception.ErrorSavingException;
+import com.alkemy.ong.exception.UnableToSaveEntityException;
+
 import com.alkemy.ong.mapper.CategoryMapper;
 import com.alkemy.ong.model.Category;
 import com.alkemy.ong.repository.CategoryRepository;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements ICategoryService {
+
 
     private final CategoryRepository categoryRepository;
     private final MessageSource messageSource;
@@ -54,12 +56,11 @@ public class CategoryServiceImpl implements ICategoryService {
 
             categorySaved = categoryRepository.save(category);
         } catch (Exception e) {
-            throw new ErrorSavingException(
-                    messageSource.getMessage("error-saving", new Object[] { "the new Category: " }, Locale.US)
+            throw new UnableToSaveEntityException(
+                    messageSource.getMessage("unable-to-save-entity", new Object[] { "the new Category: " }, Locale.US)
                     + e.getMessage());
         }
 
         return mapper.CategoryEntity2CategoryDto(categorySaved);
     }
-
 }

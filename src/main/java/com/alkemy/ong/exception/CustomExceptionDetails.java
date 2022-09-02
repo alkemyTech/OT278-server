@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CustomExceptionDetails {
-    
+
     private String exception;
     private String message;
     private String path;
@@ -25,5 +25,4 @@ public class CustomExceptionDetails {
             ", path='" + getPath() + "'" +
             "}";
     }
-
 }
