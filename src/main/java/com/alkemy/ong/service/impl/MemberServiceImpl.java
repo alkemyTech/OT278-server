@@ -1,6 +1,7 @@
 package com.alkemy.ong.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Locale;
 
 import org.springframework.context.MessageSource;
@@ -47,6 +48,12 @@ public class MemberServiceImpl implements IMemberService {
         }
 
         return mapper.memberEntity2MemberDto(memberSaved);
+    }
+
+    @Override
+    public List<MemberResponseDto> findAll() {
+        List<Member> members = memberRepository.findAll();
+        return mapper.allMembers2MembersDtos(members);
     }
 
 }
