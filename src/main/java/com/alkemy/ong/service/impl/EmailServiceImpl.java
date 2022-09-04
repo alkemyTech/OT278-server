@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.alkemy.ong.service.IEmailService;
 import static com.sendgrid.Method.POST;
 
-import java.io.IOException;
 import java.util.Locale;
 
 import com.sendgrid.Request;
