@@ -29,6 +29,7 @@ public class SecurityConfiguration {
                 .antMatchers("/categories/new").hasRole("ADMIN")
                 .antMatchers(HttpMethod.POST ,"/testimonials").hasRole("ADMIN")
                 .antMatchers(HttpMethod.POST,"/organization/public").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET,"/news").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(STATELESS)
