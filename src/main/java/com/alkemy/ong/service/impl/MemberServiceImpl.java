@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.alkemy.ong.dto.member.MemberRequestDto;
 import com.alkemy.ong.dto.member.MemberResponseDto;
-import com.alkemy.ong.exception.ErrorSavingException;
+import com.alkemy.ong.exception.EmptyListException;
+import com.alkemy.ong.exception.UnableToSaveEntityException;
 import com.alkemy.ong.mapper.MemberMapper;
 import com.alkemy.ong.model.Member;
 import com.alkemy.ong.repository.MemberRepository;
@@ -42,7 +43,7 @@ public class MemberServiceImpl implements IMemberService {
 
             memberSaved = memberRepository.save(member);
         } catch (Exception e) {
-            throw new ErrorSavingException(
+            throw new UnableToSaveEntityException(
                     messageSource.getMessage("error-saving", new Object[] { "the new Member: " }, Locale.US)
                     + e.getMessage());
         }
@@ -53,6 +54,9 @@ public class MemberServiceImpl implements IMemberService {
     @Override
     public List<MemberResponseDto> findAll() {
         List<Member> members = memberRepository.findAll();
+        if (members.isEmpty()){
+            throw new EmptyListException(messageSource.getMessage("empty-list",null ,Locale.US));
+        }
         return mapper.allMembers2MembersDtos(members);
     }
 
