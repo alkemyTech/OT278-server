@@ -1,8 +1,9 @@
 package com.alkemy.ong.service;
 
 import com.alkemy.ong.dto.request.TestimonialRequestDto;
+import com.alkemy.ong.dto.response.TestimonialResponseDto;
 
 public interface ITestimonialService {
 
-    TestimonialRequestDto save(TestimonialRequestDto dto);
+    TestimonialResponseDto save(TestimonialRequestDto dto);
 }
