@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alkemy.ong.dto.member.MemberRequestDto;
-import com.alkemy.ong.dto.member.MemberResponseDto;
+import com.alkemy.ong.dto.request.MemberRequestDto;
+import com.alkemy.ong.dto.response.MemberResponseDto;
 import com.alkemy.ong.service.impl.MemberServiceImpl;
 
 import lombok.RequiredArgsConstructor;

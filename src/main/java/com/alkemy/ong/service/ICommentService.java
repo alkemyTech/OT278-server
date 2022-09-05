@@ -1,7 +1,7 @@
 package com.alkemy.ong.service;
 
-import com.alkemy.ong.dto.comment.CommentRequestDto;
-import com.alkemy.ong.dto.comment.CommentResponseDto;
+import com.alkemy.ong.dto.request.CommentRequestDto;
+import com.alkemy.ong.dto.response.CommentResponseDto;
 
 public interface ICommentService {
 

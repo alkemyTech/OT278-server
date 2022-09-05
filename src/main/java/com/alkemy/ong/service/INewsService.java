@@ -1,11 +1,8 @@
 package com.alkemy.ong.service;
 
-import com.alkemy.ong.dto.NewsDto;
-import com.alkemy.ong.model.News;
-import javassist.NotFoundException;
+import com.alkemy.ong.dto.response.NewsResponseDto;
 
 public interface INewsService {
 
-    News getNewsById(Long id) throws NotFoundException;
-    NewsDto getById(Long id) throws NotFoundException;
+    NewsResponseDto getById(Long id) ;
 }

@@ -1,13 +1,14 @@
 package com.alkemy.ong.mapper;
 
-import com.alkemy.ong.dto.NewsDto;
+import com.alkemy.ong.dto.request.NewsRequestDto;
+import com.alkemy.ong.dto.response.NewsResponseDto;
 import com.alkemy.ong.model.News;
 import org.springframework.stereotype.Component;
 
 @Component
 public class NewsMapper {
 
-    public News newsDto2NewsEntity(NewsDto dto) {
+    public News newsDto2NewsEntity(NewsRequestDto dto) {
         News entity = new News();
         entity.setName(dto.getName());
         entity.setContent(dto.getContent());
@@ -15,8 +16,8 @@ public class NewsMapper {
         return entity;
     }
 
-    public NewsDto newsEntity2NewsDto(News entity) {
-        NewsDto dto = new NewsDto();
+    public NewsResponseDto newsEntity2NewsDto(News entity) {
+        NewsResponseDto dto = new NewsResponseDto();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
         dto.setContent(entity.getContent());

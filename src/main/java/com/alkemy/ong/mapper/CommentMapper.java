@@ -1,7 +1,7 @@
 package com.alkemy.ong.mapper;
 
-import com.alkemy.ong.dto.comment.CommentRequestDto;
-import com.alkemy.ong.dto.comment.CommentResponseDto;
+import com.alkemy.ong.dto.request.CommentRequestDto;
+import com.alkemy.ong.dto.response.CommentResponseDto;
 import com.alkemy.ong.model.Comment;
 import org.springframework.stereotype.Component;
 

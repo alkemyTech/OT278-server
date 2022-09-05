@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alkemy.ong.dto.category.CategoryRequestDto;
-import com.alkemy.ong.dto.category.CategoryResponseDto;
+import com.alkemy.ong.dto.request.CategoryRequestDto;
+import com.alkemy.ong.dto.response.CategoryResponseDto;
 import com.alkemy.ong.service.impl.CategoryServiceImpl;
 
 import lombok.RequiredArgsConstructor;

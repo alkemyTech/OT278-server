@@ -1,4 +1,4 @@
-package com.alkemy.ong.dto.comment;
+package com.alkemy.ong.dto.request;
 
 import lombok.*;
 

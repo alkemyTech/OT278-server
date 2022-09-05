@@ -1,7 +1,7 @@
 package com.alkemy.ong.controller;
 
-import com.alkemy.ong.dto.activity.ActivityRequestDTO;
-import com.alkemy.ong.dto.activity.ActivityResponseDTO;
+import com.alkemy.ong.dto.request.ActivityRequestDTO;
+import com.alkemy.ong.dto.response.ActivityResponseDTO;
 import com.alkemy.ong.service.impl.ActivityServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

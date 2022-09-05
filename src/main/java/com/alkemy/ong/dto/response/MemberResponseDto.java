@@ -1,4 +1,4 @@
-package com.alkemy.ong.dto.member;
+package com.alkemy.ong.dto.response;
 
 import java.time.LocalDateTime;
 

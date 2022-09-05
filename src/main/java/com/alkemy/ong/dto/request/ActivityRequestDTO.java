@@ -1,4 +1,4 @@
-package com.alkemy.ong.dto.comment;
+package com.alkemy.ong.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,16 +6,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentResponseDto {
+public class ActivityRequestDTO {
 
-    private Long id;
-    private String body;
-    private Long user_id;
-    private Long news_id;
+    private String name;
+    private String content;
+    private String image;
+
 }

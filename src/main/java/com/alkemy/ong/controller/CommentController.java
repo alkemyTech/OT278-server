@@ -1,7 +1,7 @@
 package com.alkemy.ong.controller;
 
-import com.alkemy.ong.dto.comment.CommentRequestDto;
-import com.alkemy.ong.dto.comment.CommentResponseDto;
+import com.alkemy.ong.dto.request.CommentRequestDto;
+import com.alkemy.ong.dto.response.CommentResponseDto;
 import com.alkemy.ong.service.impl.CommentServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

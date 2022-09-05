@@ -1,7 +1,7 @@
 package com.alkemy.ong.service.impl;
 
-import com.alkemy.ong.dto.comment.CommentRequestDto;
-import com.alkemy.ong.dto.comment.CommentResponseDto;
+import com.alkemy.ong.dto.request.CommentRequestDto;
+import com.alkemy.ong.dto.response.CommentResponseDto;
 import com.alkemy.ong.mapper.CommentMapper;
 import com.alkemy.ong.model.Comment;
 import com.alkemy.ong.repository.CommentRepository;

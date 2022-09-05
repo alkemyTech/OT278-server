@@ -2,8 +2,8 @@ package com.alkemy.ong.mapper;
 
 import org.springframework.stereotype.Component;
 
-import com.alkemy.ong.dto.category.CategoryRequestDto;
-import com.alkemy.ong.dto.category.CategoryResponseDto;
+import com.alkemy.ong.dto.request.CategoryRequestDto;
+import com.alkemy.ong.dto.response.CategoryResponseDto;
 import com.alkemy.ong.model.Category;
 
 @Component
@@ -24,9 +24,6 @@ public class CategoryMapper {
        dto.setId(entity.getId());
        dto.setName(entity.getName());
        dto.setDescription(entity.getDescription());
-       dto.setCreationTimestamp(entity.getCreationTimestamp());
-       dto.setUpdateTimeStamp(entity.getUpdateTimeStamp());
-       dto.setDeleted(entity.isDeleted());
        dto.setImage(entity.getImage());
 
        return dto;

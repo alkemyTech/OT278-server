@@ -1,6 +1,6 @@
 package com.alkemy.ong.service.impl;
 
-import com.alkemy.ong.dto.ContactDto;
+import com.alkemy.ong.dto.request.ContactRequestDto;
 import com.alkemy.ong.exception.UnableToSaveEntityException;
 import com.alkemy.ong.mapper.ContactMapper;
 import com.alkemy.ong.model.Contact;
@@ -20,7 +20,7 @@ public class ContactServiceImpl implements IContactService {
     private final ContactRepository repository;
     private final MessageSource messageSource;
 
-    public ContactDto save(ContactDto dto) {
+    public ContactRequestDto save(ContactRequestDto dto) {
         try {
             Contact entity = mapper.contactDto2ContactEntity(dto);
             Contact savedEntity = repository.save(entity);

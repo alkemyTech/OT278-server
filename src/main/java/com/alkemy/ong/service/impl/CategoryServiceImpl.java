@@ -8,8 +8,8 @@ import java.util.Locale;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
-import com.alkemy.ong.dto.category.CategoryRequestDto;
-import com.alkemy.ong.dto.category.CategoryResponseDto;
+import com.alkemy.ong.dto.request.CategoryRequestDto;
+import com.alkemy.ong.dto.response.CategoryResponseDto;
 import com.alkemy.ong.exception.AlreadyExistsException;
 import com.alkemy.ong.exception.UnableToSaveEntityException;
 
@@ -44,8 +44,8 @@ public class CategoryServiceImpl implements ICategoryService {
 
             Category category = mapper.categoryDto2CategoryEntity(dto);
 
-            category.setCreationTimestamp(Timestamp.valueOf(LocalDateTime.now()));
-            category.setUpdateTimeStamp(Timestamp.valueOf(LocalDateTime.now()));
+            category.setCreationDate(LocalDateTime.now());
+            category.setUpdateDate(LocalDateTime.now());
 
             /*
              * TODO: <- ImageService should validate and return the path of the File...

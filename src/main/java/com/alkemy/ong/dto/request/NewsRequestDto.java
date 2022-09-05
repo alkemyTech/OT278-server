@@ -1,4 +1,4 @@
-package com.alkemy.ong.dto;
+package com.alkemy.ong.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,9 +12,7 @@ import java.io.Serializable;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class NewsDto implements Serializable {
-
-    private Long id;
+public class NewsRequestDto implements Serializable {
 
     @NotBlank(message = "Name cannot be null")
     private String name;

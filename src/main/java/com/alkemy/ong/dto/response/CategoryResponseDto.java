@@ -1,6 +1,4 @@
-package com.alkemy.ong.dto.category;
-
-import javax.validation.constraints.NotBlank;
+package com.alkemy.ong.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,14 +9,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CategoryRequestDto {
-
-    @NotBlank(message = "Name can't be null or empty")
-    private String name;
+public class CategoryResponseDto {
     
+    private Long id;
+    private String name;
     private String description;
-
     private String image;
 
-}
 
+}

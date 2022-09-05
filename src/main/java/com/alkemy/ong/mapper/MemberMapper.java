@@ -2,8 +2,8 @@ package com.alkemy.ong.mapper;
 
 import org.springframework.stereotype.Component;
 
-import com.alkemy.ong.dto.member.MemberRequestDto;
-import com.alkemy.ong.dto.member.MemberResponseDto;
+import com.alkemy.ong.dto.request.MemberRequestDto;
+import com.alkemy.ong.dto.response.MemberResponseDto;
 import com.alkemy.ong.model.Member;
 
 @Component

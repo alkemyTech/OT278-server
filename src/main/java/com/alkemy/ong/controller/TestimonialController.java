@@ -1,6 +1,6 @@
 package com.alkemy.ong.controller;
 
-import com.alkemy.ong.dto.TestimonialDto;
+import com.alkemy.ong.dto.request.TestimonialRequestDto;
 import com.alkemy.ong.service.ITestimonialService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,8 +20,8 @@ public class TestimonialController {
     private final ITestimonialService service;
 
     @PostMapping
-    public ResponseEntity<TestimonialDto> save(@Valid @RequestBody TestimonialDto testimonial) {
-        TestimonialDto savedTestimonial = service.save(testimonial);
+    public ResponseEntity<TestimonialRequestDto> save(@Valid @RequestBody TestimonialRequestDto testimonial) {
+        TestimonialRequestDto savedTestimonial = service.save(testimonial);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedTestimonial);
     }
 }

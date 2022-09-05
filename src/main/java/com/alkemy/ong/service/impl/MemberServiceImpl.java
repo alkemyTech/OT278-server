@@ -6,8 +6,8 @@ import java.util.Locale;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
-import com.alkemy.ong.dto.member.MemberRequestDto;
-import com.alkemy.ong.dto.member.MemberResponseDto;
+import com.alkemy.ong.dto.request.MemberRequestDto;
+import com.alkemy.ong.dto.response.MemberResponseDto;
 import com.alkemy.ong.exception.ErrorSavingException;
 import com.alkemy.ong.mapper.MemberMapper;
 import com.alkemy.ong.model.Member;
