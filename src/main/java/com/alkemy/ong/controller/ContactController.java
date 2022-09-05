@@ -3,6 +3,7 @@ package com.alkemy.ong.controller;
 import com.alkemy.ong.dto.request.ContactRequestDto;
 import com.alkemy.ong.dto.response.ContactResponseDto;
 import com.alkemy.ong.service.IContactService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +23,8 @@ public class ContactController {
 
     @PostMapping
     public ResponseEntity<ContactResponseDto> save(@Valid @RequestBody ContactRequestDto contact) {
-        ContactResponseDto savedContact = service.save(contact);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedContact);
+        
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(contact));
     }
 
 }

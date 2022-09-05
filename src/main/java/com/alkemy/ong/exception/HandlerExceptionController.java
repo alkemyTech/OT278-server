@@ -14,8 +14,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class HandlerExceptionController {
 
+    @ResponseStatus(OK)
+    @ExceptionHandler({EmptyListException.class})
+    @ResponseBody
+    public CustomExceptionDetails emptyList(HttpServletRequest request, Exception exception) {
+        return new CustomExceptionDetails(exception, request.getRequestURI());
+    }
+
     @ResponseStatus(NOT_FOUND)
-    @ExceptionHandler({NotFoundException.class})
+    @ExceptionHandler({
+            NotFoundException.class,
+            EmptyListException.class
+    })
     @ResponseBody
     public CustomExceptionDetails notFoundRequest(HttpServletRequest request, Exception exception) {
         return new CustomExceptionDetails(exception, request.getRequestURI());
