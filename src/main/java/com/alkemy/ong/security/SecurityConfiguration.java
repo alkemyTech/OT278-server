@@ -24,7 +24,11 @@ public class SecurityConfiguration {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/auth/*").permitAll()
+                //.antMatchers("/auth/*").permitAll()
+                .antMatchers("/auth/register").permitAll()
+                .antMatchers("/auth/login").permitAll()
+                .antMatchers("/auth/users/").hasAnyRole("ADMIN","USER")
+                .antMatchers("/auth/me").hasAnyRole("ADMIN","USER")
                 .antMatchers("/activities").hasRole("ADMIN")
                 .antMatchers("/categories").hasRole("ADMIN")
                 .antMatchers(HttpMethod.POST ,"/testimonials").hasRole("ADMIN")
