@@ -3,6 +3,7 @@ package com.alkemy.ong.security.controller;
 import com.alkemy.ong.security.dto.*;
 import com.alkemy.ong.security.auth.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,4 +35,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userResponseDto);
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDto> getOne(@RequestHeader(value = HttpHeaders.AUTHORIZATION,required = true) String authorization){
+        return ResponseEntity.ok(service.getOne(authorization));
+    }
 }

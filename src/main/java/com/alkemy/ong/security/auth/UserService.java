@@ -100,4 +100,9 @@ public class UserService {
         return userMapper.userEntity2UserResponseDto(userRepository.save(userModified));
     }
 
+    public UserResponseDto getOne(String auth){
+        String jwt = auth.substring(7);
+        User user = userRepository.findByEmail(jwtUtils.extractUsername(jwt));
+        return userMapper.userEntity2UserResponseDto(user);
+    }
 }
