@@ -2,6 +2,8 @@ package com.alkemy.ong.model;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
@@ -60,6 +62,10 @@ public class Organization {
 
     @OneToMany(mappedBy = "organization",fetch = FetchType.LAZY)
     private Set<Slide> slides = new HashSet<>();
+
+    @OneToOne
+    @OnDelete(action = CASCADE)
+    private SocialMedia socialMedia;
 
     private Boolean deleted = Boolean.FALSE;
 }
