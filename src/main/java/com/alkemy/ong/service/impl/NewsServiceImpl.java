@@ -21,12 +21,15 @@ public class NewsServiceImpl implements INewsService {
     private final NewsMapper mapper;
     private final MessageSource messageSource;
 
-    public NewsDto getById(Long id)  {
+    public NewsDto getById(Long id) {
+        if (id <= 0) {
+            throw new ArithmeticException(messageSource.getMessage("error-negative-id", null, Locale.US));
+        }
         News entity = getNewsById(id);
         return mapper.newsEntity2NewsDto(entity);
     }
 
-    public News getNewsById(Long id)  {
+    private News getNewsById(Long id) {
         Optional<News> news = repository.findById(id);
         if(news.isEmpty()){
             throw new NotFoundException(messageSource.getMessage("news.not-found", null, Locale.US));
