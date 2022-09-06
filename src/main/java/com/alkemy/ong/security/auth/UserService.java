@@ -3,6 +3,7 @@ package com.alkemy.ong.security.auth;
 import com.alkemy.ong.exception.EmptyListException;
 import com.alkemy.ong.exception.NotFoundException;
 
+import com.alkemy.ong.exception.UserNotLoggedException;
 import com.alkemy.ong.security.dto.*;
 import com.alkemy.ong.security.model.User;
 import com.alkemy.ong.security.repository.UserRepository;
@@ -12,6 +13,7 @@ import com.alkemy.ong.service.IEmailService;
 import com.alkemy.ong.security.mapper.UserMapper;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -38,9 +41,9 @@ public class UserService {
     private final CustomDetailsService userDetailsService;
     private final IEmailService emailService;
     private final UserRepository repository;
-
-
     private final MessageSource messageSource;
+    private final CustomDetailsService detailsService;
+
     public UserResponseDto save(UserRequestDto dto) {
       
         User userCheck = userRepository.findByEmail(dto.getEmail());
@@ -110,7 +113,16 @@ public class UserService {
 
     public void delete(Long id) {
         User user = getById(id);
-        repository.delete(user);
+        if (compareUsers(user)){
+            repository.delete(user);
+        } else {
+            throw new UserNotLoggedException(messageSource.getMessage("user-not-logged", new Object[]{user.getId()},Locale.US));
+        }
+    }
+
+    private boolean compareUsers(User user) {
+        UserDetails userDetails = detailsService.loadUserByUsername(user.getEmail());
+        return Objects.equals(userDetails.getUsername(), user.getEmail()) && Objects.equals(userDetails.getPassword(), user.getPassword());
     }
 
     private User getById(Long id) {
