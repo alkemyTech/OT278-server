@@ -2,10 +2,10 @@ package com.alkemy.ong.service;
 
 import com.alkemy.ong.dto.ContactDto;
 
-import java.util.Set;
+import java.util.List;
 
 public interface IContactService {
 
     ContactDto save(ContactDto dto);
-    Set<ContactDto> findAll();
+    List<ContactDto> findAll();
 }

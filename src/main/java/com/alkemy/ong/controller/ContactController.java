@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @RequestMapping("/contacts")
@@ -25,7 +25,7 @@ public class ContactController {
     }
 
     @GetMapping
-    public ResponseEntity<Set<ContactDto>> getAll(){
+    public ResponseEntity<List<ContactDto>> getAll(){
         return ResponseEntity.ok(service.findAll());
     }
 }
