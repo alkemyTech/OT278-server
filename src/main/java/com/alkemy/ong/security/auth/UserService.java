@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +37,7 @@ public class UserService {
     private final JwtUtils jwtUtils;
     private final CustomDetailsService userDetailsService;
     private final IEmailService emailService;
+    private final UserRepository repository;
 
 
     private final MessageSource messageSource;
@@ -106,4 +108,16 @@ public class UserService {
         return userMapper.userEntityList2UserDtoList(list);
     }
 
+    public void delete(Long id) {
+        User user = getById(id);
+        repository.delete(user);
+    }
+
+    private User getById(Long id) {
+        Optional<User> user = repository.findById(id);
+        if(user.isEmpty()){
+            throw new NotFoundException(messageSource.getMessage("user.not-found", null, Locale.US));
+        }
+        return user.get();
+    }
 }
