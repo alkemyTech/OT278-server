@@ -4,9 +4,11 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import com.alkemy.ong.dto.category.CategoryNameDto;
 import com.alkemy.ong.exception.EmptyListException;
+import com.alkemy.ong.exception.NotFoundException;
 import com.alkemy.ong.service.ICategoryService;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -71,6 +73,17 @@ public class CategoryServiceImpl implements ICategoryService {
         if (entities.isEmpty())
             throw new EmptyListException(messageSource.getMessage("empty-list", null, Locale.US));
         return mapper.CategoryEntityList2CategoryNameDtoList(entities);
+    }
+
+    @Override
+    public CategoryResponseDto update(Long id, CategoryRequestDto dto) {
+        Optional<Category> exists = repository.findById(id);
+        if (!exists.isPresent()){
+            throw new NotFoundException(messageSource.getMessage("not-found",new Object[]{"Category"},Locale.US));
+        }
+        Category category = mapper.categoryDto2CategoryEntity(dto);
+        category.setId(id);
+        return mapper.CategoryEntity2CategoryDto(repository.save(category));
     }
 
 }
