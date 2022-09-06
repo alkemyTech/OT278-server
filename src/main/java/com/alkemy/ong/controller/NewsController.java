@@ -2,8 +2,8 @@ package com.alkemy.ong.controller;
 
 import com.alkemy.ong.dto.NewsDto;
 import com.alkemy.ong.service.INewsService;
-import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,9 +18,8 @@ public class NewsController {
     private final INewsService service;
 
     @GetMapping("/{id}")
-    public ResponseEntity<NewsDto> getNewsById(@PathVariable Long id) throws NotFoundException {
-        NewsDto news = service.getById(id);
-        return ResponseEntity.ok(news);
+    public ResponseEntity<NewsDto> getById(@PathVariable Long id)  {
+        return ResponseEntity.status(HttpStatus.OK).body(service.getById(id));
     }
 
 }
