@@ -19,6 +19,9 @@ public class OrganizationMapper {
         organization.setWelcomeText(dto.getWelcomeText());
         organization.setName(dto.getName());
         organization.setAddress(dto.getAddress());
+        organization.setInstagramUrl(dto.getInstagramUrl());
+        organization.setFacebookUrl(dto.getFacebookUrl());
+        organization.setLinkedinUrl(dto.getLinkedinUrl());
         return organization;
     }
 
@@ -31,6 +34,9 @@ public class OrganizationMapper {
         dto.setAboutUs(organization.getAboutUs());
         dto.setPhone(organization.getPhone());
         dto.setEmail(organization.getEmail());
+        dto.setInstagramUrl(organization.getInstagramUrl());
+        dto.setFacebookUrl(organization.getFacebookUrl());
+        dto.setLinkedinUrl(organization.getLinkedinUrl());
         return dto;
     }
     public Organization orgPublicDTO2orgEntity (OrganizationPublicDTO dto) {

@@ -17,4 +17,14 @@ public class OrganizationDto {
     private String email;
     private String welcomeText;
     private String aboutUs;
+
+    @Pattern(regexp = "^\\s*(http\\:\\/\\/)?facebook\\.com\\/[a-z\\d-_]{1,255}\\s*$/i", 
+            message = "The url entered does not match the pattern")
+    private String facebookUrl;
+    @Pattern(regexp = "^\\s*(http\\:\\/\\/)?instagram\\.com\\/[a-z\\d-_]{1,255}\\s*$/i", 
+            message = "The url entered does not match the pattern")
+    private String instagramUrl;
+    @Pattern(regexp = "^\\s*(http\\:\\/\\/)?linkedin\\.com\\/[a-z\\d-_]{1,255}\\s*$/i", 
+            message = "The url entered does not match the pattern")
+    private String linkedinUrl;
 }
