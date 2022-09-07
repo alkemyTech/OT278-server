@@ -1,13 +1,14 @@
 package com.alkemy.ong.service.impl;
 
-import com.alkemy.ong.dto.ContactDto;
 import com.alkemy.ong.exception.EmptyListException;
+import com.alkemy.ong.dto.contact.ContactRequestDto;
+import com.alkemy.ong.dto.contact.ContactResponseDto;
 import com.alkemy.ong.exception.UnableToSaveEntityException;
 import com.alkemy.ong.mapper.ContactMapper;
 import com.alkemy.ong.model.Contact;
-import com.alkemy.ong.repository.ContactRepository;
 import com.alkemy.ong.service.IContactService;
 import com.alkemy.ong.service.IEmailService;
+import com.alkemy.ong.repository.ContactRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -25,7 +26,7 @@ public class ContactServiceImpl implements IContactService {
     private final IEmailService emailService;
     private final MessageSource messageSource;
 
-    public ContactDto save(ContactDto dto) {
+    public ContactResponseDto save(ContactRequestDto dto) {
         try {
             Contact entity = mapper.contactDto2ContactEntity(dto);
             Contact savedEntity = repository.save(entity);
@@ -36,7 +37,7 @@ public class ContactServiceImpl implements IContactService {
         }
     }
 
-    public List<ContactDto> findAll(){
+    public List<ContactResponseDto> findAll(){
         List<Contact> contacts = repository.findAll();
         if (contacts.isEmpty()) {
             throw new EmptyListException(messageSource.getMessage("empty-list", null, Locale.US));

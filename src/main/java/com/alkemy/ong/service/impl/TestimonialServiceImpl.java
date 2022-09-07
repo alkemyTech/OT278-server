@@ -1,17 +1,19 @@
 package com.alkemy.ong.service.impl;
 
-import com.alkemy.ong.dto.TestimonialDto;
+import com.alkemy.ong.dto.testimonial.TestimonialRequestDto;
+import com.alkemy.ong.dto.testimonial.TestimonialResponseDto;
 import com.alkemy.ong.exception.NotFoundException;
 import com.alkemy.ong.exception.UnableToSaveEntityException;
 import com.alkemy.ong.exception.UnableToUpdateEntityException;
 import com.alkemy.ong.mapper.TestimonialMapper;
 import com.alkemy.ong.model.Testimonial;
-import com.alkemy.ong.repository.TestimonialRepository;
 import com.alkemy.ong.service.ITestimonialService;
+import com.alkemy.ong.repository.TestimonialRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -23,7 +25,7 @@ public class TestimonialServiceImpl implements ITestimonialService {
     private final TestimonialMapper mapper;
     private final MessageSource messageSource;
 
-    public TestimonialDto save(TestimonialDto dto) {
+    public TestimonialResponseDto save(TestimonialRequestDto dto) {
         try {
             Testimonial entity = mapper.testimonialDto2TestimonialEntity(dto);
             Testimonial savedEntity = repository.save(entity);
@@ -33,13 +35,14 @@ public class TestimonialServiceImpl implements ITestimonialService {
         }
     }
 
-    public TestimonialDto update(TestimonialDto dto, Long id) {
-        Testimonial entity = getFromRepositoryById(id);
+    public TestimonialResponseDto update(TestimonialRequestDto dto, Long id) {
+        Testimonial entity = getTestimonialById(id);
         try {
             entity.setName(dto.getName());
             // TODO: Implement image service
             entity.setImage(dto.getImage());
             entity.setContent(dto.getContent());
+            entity.setUpdateDate(LocalDateTime.now());
             repository.save(entity);
             return mapper.testimonialEntity2testimonialDto(entity);
         } catch (Exception e) {
@@ -47,7 +50,7 @@ public class TestimonialServiceImpl implements ITestimonialService {
         }
     }
 
-    private Testimonial getFromRepositoryById(Long id) {
+    private Testimonial getTestimonialById(Long id) {
         Optional<Testimonial> entity = repository.findById(id);
         if (entity.isEmpty())
             throw new NotFoundException(messageSource.getMessage("not-found",new Object[] { "Entity with Id: " + id } ,Locale.US));
