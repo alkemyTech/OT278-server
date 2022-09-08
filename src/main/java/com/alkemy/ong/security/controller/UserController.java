@@ -27,7 +27,7 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserResponseDto> getOne(@RequestHeader(value = HttpHeaders.AUTHORIZATION,required = true) String authorization){
+    public ResponseEntity<UserResponseDto> getLoggerUserData(@RequestHeader(value = HttpHeaders.AUTHORIZATION,required = true) String authorization){
         return ResponseEntity.ok(service.getLoggerUserData(authorization));
     }
 }
