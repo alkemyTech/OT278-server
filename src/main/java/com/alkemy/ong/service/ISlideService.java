@@ -9,5 +9,5 @@ import java.util.List;
 public interface ISlideService {
     SlideResponseDto create(SlideRequestDto dto);
     List<SlideBasicResponseDto> getAll();
-
+    void delete(Long id);
 }

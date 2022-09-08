@@ -4,6 +4,8 @@ import com.alkemy.ong.dto.slide.SlideBasicResponseDto;
 import com.alkemy.ong.dto.slide.SlideRequestDto;
 import com.alkemy.ong.dto.slide.SlideResponseDto;
 import com.alkemy.ong.exception.EmptyListException;
+import com.alkemy.ong.exception.NotFoundException;
+import com.alkemy.ong.exception.UnableToDeleteEntityException;
 import com.alkemy.ong.mapper.SlideMapper;
 import com.alkemy.ong.model.Organization;
 import com.alkemy.ong.model.Slide;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -66,5 +69,19 @@ public class SlideServiceImpl implements ISlideService {
 
         return responseDTO;
 
+    }
+
+    @Override
+    public void delete(Long id){
+        Optional<Slide> exists = slideRepository.findById(id);
+        if (exists.isPresent()){
+            throw new NotFoundException(messageSource.getMessage("not-found",new Object[]{"Slide"},Locale.US));
+        }
+        try {
+            Slide slide = exists.get();
+            slideRepository.delete(slide);
+        }catch (Exception e){
+            throw new UnableToDeleteEntityException(messageSource.getMessage("unable-to-delete-entity",null,Locale.US));
+        }
     }
 }
