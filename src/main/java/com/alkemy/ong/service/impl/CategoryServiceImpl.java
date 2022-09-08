@@ -4,9 +4,13 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import com.alkemy.ong.dto.category.CategoryNameDto;
+import com.alkemy.ong.dto.news.NewsResponseDto;
 import com.alkemy.ong.exception.EmptyListException;
+import com.alkemy.ong.exception.NotFoundException;
+import com.alkemy.ong.model.News;
 import com.alkemy.ong.service.ICategoryService;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -73,4 +77,19 @@ public class CategoryServiceImpl implements ICategoryService {
         return mapper.CategoryEntityList2CategoryNameDtoList(entities);
     }
 
+    public CategoryResponseDto getById(Long id) {
+        if (id <= 0) {
+            throw new ArithmeticException(messageSource.getMessage("error-negative-id", null, Locale.US));
+        }
+        Category entity = getCategoryById(id);
+        return mapper.CategoryEntity2CategoryDto(entity);
+    }
+
+    private Category getCategoryById(Long id) {
+        Optional<Category> category = repository.findById(id);
+        if(category.isEmpty()){
+            throw new NotFoundException(messageSource.getMessage("category.not-found", null, Locale.US));
+        }
+        return category.get();
+    }
 }
