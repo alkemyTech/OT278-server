@@ -3,7 +3,6 @@ package com.alkemy.ong.security.auth;
 import com.alkemy.ong.exception.EmptyListException;
 import com.alkemy.ong.exception.NotFoundException;
 
-import com.alkemy.ong.exception.UserNotLoggedException;
 import com.alkemy.ong.security.dto.*;
 import com.alkemy.ong.security.model.User;
 import com.alkemy.ong.security.repository.UserRepository;
@@ -13,7 +12,6 @@ import com.alkemy.ong.service.IEmailService;
 import com.alkemy.ong.security.mapper.UserMapper;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -42,7 +40,6 @@ public class UserService {
     private final IEmailService emailService;
     private final UserRepository repository;
     private final MessageSource messageSource;
-    private final CustomDetailsService detailsService;
 
     public UserResponseDto save(UserRequestDto dto) {
       
@@ -113,22 +110,19 @@ public class UserService {
 
     public void delete(Long id) {
         User user = getById(id);
-        if (compareUsers(user)){
-            repository.delete(user);
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
+        final String jwt = jwtUtils.generateToken(userDetails);
+        if (jwtUtils.validateToken(jwt, userDetails)){
+            repository.deleteById(id);
         } else {
-            throw new UserNotLoggedException(messageSource.getMessage("user-not-logged", new Object[]{user.getId()},Locale.US));
+            throw new NotFoundException(messageSource.getMessage("not-found", new Object[]{"User"},Locale.US));
         }
-    }
-
-    private boolean compareUsers(User user) {
-        UserDetails userDetails = detailsService.loadUserByUsername(user.getEmail());
-        return Objects.equals(userDetails.getUsername(), user.getEmail()) && Objects.equals(userDetails.getPassword(), user.getPassword());
     }
 
     private User getById(Long id) {
         Optional<User> user = repository.findById(id);
         if(user.isEmpty()){
-            throw new NotFoundException(messageSource.getMessage("user.not-found", null, Locale.US));
+            throw new NotFoundException(messageSource.getMessage("not-found", new Object[]{"User"},Locale.US));
         }
         return user.get();
     }

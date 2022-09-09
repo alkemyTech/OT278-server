@@ -1,6 +1,7 @@
 package com.alkemy.ong.security.controller;
 
 import com.alkemy.ong.security.auth.UserService;
+import com.alkemy.ong.security.dto.AuthenticationRequest;
 import com.alkemy.ong.security.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ public class UserController {
         return ResponseEntity.ok(list);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/:{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
