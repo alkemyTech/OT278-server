@@ -1,12 +1,12 @@
 package com.alkemy.ong.security.auth;
 
+import com.alkemy.ong.exception.AlreadyExistsException;
 import com.alkemy.ong.exception.EmptyListException;
 import com.alkemy.ong.exception.NotFoundException;
 
 import com.alkemy.ong.security.dto.*;
 import com.alkemy.ong.security.model.User;
 import com.alkemy.ong.security.repository.UserRepository;
-
 import com.alkemy.ong.security.jwt.JwtUtils;
 import com.alkemy.ong.service.IEmailService;
 import com.alkemy.ong.security.mapper.UserMapper;
@@ -14,7 +14,6 @@ import com.alkemy.ong.security.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -45,7 +43,7 @@ public class UserService {
       
         User userCheck = userRepository.findByEmail(dto.getEmail());
         if(userCheck != null)
-            throw new BadCredentialsException("Email is already in use");
+            throw new AlreadyExistsException(messageSource.getMessage("already-exists", new Object[]{"Email"},Locale.US));
 
         User newUser = userMapper.userRequestDto2UserEntity(dto);
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
@@ -55,7 +53,7 @@ public class UserService {
         AuthenticationRequest authenticationRequest = userMapper.userRequestDto2AuthenticationRequest(dto);
         AuthenticationResponse token = authenticate(authenticationRequest);
         userResponseDto.setToken(token.getJwt());
-        emailService.sendEmail(dto.getEmail());
+        //emailService.sendEmail(dto.getEmail());
         return userResponseDto;
     }
 
@@ -86,7 +84,7 @@ public class UserService {
 
             return new AuthenticationResponse(jwt);
         } else{
-            throw new RuntimeException("User not found, please check the data entered");
+            throw new NotFoundException(messageSource.getMessage("not-found", new Object[]{"User"},Locale.US));
         }
     }
 
@@ -99,6 +97,12 @@ public class UserService {
         userModified.setId(id);
         userModified.setPassword(passwordEncoder.encode(userModified.getPassword()));
         return userMapper.userEntity2UserResponseDto(userRepository.save(userModified));
+    }
+    
+    public UserResponseDto getLoggerUserData(String auth){
+        String jwt = auth.substring(7);
+        User user = userRepository.findByEmail(jwtUtils.extractUsername(jwt));
+        return userMapper.userEntity2UserResponseDto(user);
     }
 
     public List<UserDto> getAll() {
