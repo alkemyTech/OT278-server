@@ -83,14 +83,14 @@ public class SlideServiceImpl implements ISlideService {
             repository.save(entity);
             return mapper.slideEntity2SlideDTO(entity);
         } catch (Exception e) {
-            throw new UnableToUpdateEntityException(messageSource.getMessage("unable-to-update-entity", new Object[] { "Slide" }, Locale.US));
+            throw new UnableToUpdateEntityException(messageSource.getMessage("unable-to-update-slide", null, Locale.US));
         }
     }
 
     private Slide getSlideById(Long id) {
         Optional<Slide> entity = repository.findById(id);
         if (entity.isEmpty())
-            throw new NotFoundException(messageSource.getMessage("not-found",new Object[] { "Entity with Id: " + id } ,Locale.US));
+            throw new NotFoundException(messageSource.getMessage("slide-not-found", null ,Locale.US));
         return entity.get();
     }
 }
