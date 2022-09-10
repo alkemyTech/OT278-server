@@ -2,6 +2,7 @@ package com.alkemy.ong.mapper;
 
 import com.alkemy.ong.dto.slide.SlideBasicResponseDto;
 import com.alkemy.ong.dto.slide.SlideRequestDto;
+import com.alkemy.ong.dto.slide.SlideResponseDTO;
 import com.alkemy.ong.dto.slide.SlideResponseDto;
 import com.alkemy.ong.model.Organization;
 import com.alkemy.ong.model.Slide;
@@ -49,5 +50,10 @@ public class SlideMapper {
         return dto;
     }
 
+    public List<SlideResponseDto> slideEntityList2DtoSlideList(List<Slide> entities){
+        return entities.stream()
+                .map(this::slideEntity2SlideDTO)
+                .collect(Collectors.toList());
+    }
 
 }

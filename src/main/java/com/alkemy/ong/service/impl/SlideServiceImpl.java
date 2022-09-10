@@ -2,10 +2,11 @@ package com.alkemy.ong.service.impl;
 
 import com.alkemy.ong.dto.slide.SlideBasicResponseDto;
 import com.alkemy.ong.dto.slide.SlideRequestDto;
-import com.alkemy.ong.dto.slide.SlideResponseDto;
+import com.alkemy.ong.dto.slide.SlideResponseDTO;
 import com.alkemy.ong.exception.EmptyListException;
 import com.alkemy.ong.exception.NotFoundException;
 import com.alkemy.ong.exception.UnableToDeleteEntityException;
+import com.alkemy.ong.dto.slide.SlideResponseDto;
 import com.alkemy.ong.mapper.SlideMapper;
 import com.alkemy.ong.model.Organization;
 import com.alkemy.ong.model.Slide;
@@ -16,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -27,11 +30,11 @@ public class SlideServiceImpl implements ISlideService {
     private final SlideRepository slideRepository;
 
     private final OrganizationRepository organizationRepository;
-
+   
     private final SlideMapper mapper;
 
     private final MessageSource messageSource;
-
+      
     @Override
     public List<SlideBasicResponseDto> getAll() {
         List<Slide> slides =  slideRepository.findAllByOrderByPositionAsc();
@@ -39,6 +42,7 @@ public class SlideServiceImpl implements ISlideService {
             throw new EmptyListException(messageSource.getMessage("empty-list", null, Locale.US));
         return mapper.slideEntityList2DtoList(slides);
     }
+
 
     public SlideResponseDto create(SlideRequestDto dto) {
 
@@ -71,6 +75,18 @@ public class SlideServiceImpl implements ISlideService {
 
     }
 
+    public List<SlideResponseDTO> findByOrganizationId(Long organizationId){
+        List<SlideResponseDTO> slides = slideRepository.findByOrganizationId(organizationId);
+
+        if (slides.isEmpty()) {
+            throw new EmptyListException(messageSource.getMessage
+                    ("slide.list.empty", null, Locale.ENGLISH));
+        }
+        Collections.sort(slides, Comparator.comparing(SlideResponseDTO::getPosition));
+
+        return slides;
+    }
+
     @Override
     public void delete(Long id){
         Optional<Slide> exists = slideRepository.findById(id);
@@ -84,4 +100,10 @@ public class SlideServiceImpl implements ISlideService {
             throw new UnableToDeleteEntityException(messageSource.getMessage("unable-to-delete-entity",null,Locale.US));
         }
     }
+
+    @Override
+    public SlideResponseDto update(SlideRequestDto dto, Long id) {
+        return null;
+    }
+
 }
