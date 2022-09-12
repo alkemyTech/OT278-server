@@ -119,14 +119,14 @@ public class UserService {
         if (jwtUtils.validateToken(jwt, userDetails)){
             repository.deleteById(id);
         } else {
-            throw new NotFoundException(messageSource.getMessage("not-found", new Object[]{"User"},Locale.US));
+            throw new NotFoundException(messageSource.getMessage("user-not-found", null, Locale.US));
         }
     }
 
     private User getById(Long id) {
         Optional<User> user = repository.findById(id);
         if(user.isEmpty()){
-            throw new NotFoundException(messageSource.getMessage("not-found", new Object[]{"User"},Locale.US));
+            throw new NotFoundException(messageSource.getMessage("user-not-found", null, Locale.US));
         }
         return user.get();
     }
