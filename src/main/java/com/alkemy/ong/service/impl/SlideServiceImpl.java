@@ -42,6 +42,11 @@ public class SlideServiceImpl implements ISlideService {
         return mapper.slideEntityList2DtoList(slides);
     }
 
+    @Override
+    public SlideResponseDto update(SlideRequestDto dto, Long id) {
+        return null;
+    }
+
 
     public SlideResponseDto create(SlideRequestDto dto) {
 

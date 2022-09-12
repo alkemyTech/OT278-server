@@ -2,13 +2,21 @@ package com.alkemy.ong.service.impl;
 
 import com.alkemy.ong.dto.comment.CommentRequestDto;
 import com.alkemy.ong.dto.comment.CommentResponseDto;
+import com.alkemy.ong.exception.ForbiddenException;
+import com.alkemy.ong.exception.NotFoundException;
 import com.alkemy.ong.mapper.CommentMapper;
 import com.alkemy.ong.model.Comment;
+import com.alkemy.ong.security.auth.UserService;
+import com.alkemy.ong.security.dto.UserResponseDto;
+import com.alkemy.ong.security.jwt.JwtUtils;
+import com.alkemy.ong.security.model.User;
 import com.alkemy.ong.service.ICommentService;
 import com.alkemy.ong.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -21,6 +29,14 @@ public class CommentServiceImpl implements ICommentService {
     @Autowired
     private CommentMapper commentMapper;
 
+    @Autowired
+    private MessageSource messageSource;
+
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public CommentResponseDto save(CommentRequestDto commentRequestDto) {
@@ -40,18 +56,15 @@ public class CommentServiceImpl implements ICommentService {
 
     //TODO to review as required
     // @Override
-    public CommentResponseDto put(Long id, CommentRequestDto edit) {
-
-        try {
-            Comment savedComment = this.getCommentById(id);
-            savedComment.setBody(edit.getBody());
-            Comment editComment = commentRepository.save(savedComment);
-            CommentResponseDto saveDto = commentMapper.entity2CommentDto(editComment);
-            return saveDto;
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+    public CommentResponseDto update(Long id, CommentRequestDto edit,String auth) {
+        UserResponseDto userResponseDto = userService.getLoggerUserData(auth);
+        if (userResponseDto.getId() != commentRepository.getById(id).getUserId()){
+            throw new ForbiddenException(messageSource.getMessage("forbidden",null,Locale.US));
         }
-
+        Optional<Comment> exists = commentRepository.findById(id);
+        if (exists.isPresent()){
+            throw new NotFoundException(messageSource.getMessage("comment-not-found",null, Locale.US));
+        }
     }
     //TODO to review as required
     public Comment getCommentById(Long id) throws Exception {
