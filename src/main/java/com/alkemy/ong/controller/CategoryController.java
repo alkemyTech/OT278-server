@@ -6,7 +6,6 @@ import static org.springframework.http.HttpStatus.CREATED;
 
 
 import com.alkemy.ong.dto.category.CategoryNameDto;
-import com.alkemy.ong.dto.news.NewsResponseDto;
 import com.alkemy.ong.model.Category;
 import com.alkemy.ong.repository.CategoryRepository;
 import org.springframework.data.domain.Page;
@@ -25,7 +24,6 @@ import com.alkemy.ong.service.ICategoryService;
 import lombok.RequiredArgsConstructor;
 import java.util.List;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/categories")
