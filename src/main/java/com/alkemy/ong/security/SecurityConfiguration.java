@@ -29,7 +29,7 @@ public class SecurityConfiguration {
                 .authorizeRequests()
                 .antMatchers("/auth/*").permitAll()
 
-                .antMatchers("/users/*",
+                .antMatchers("/users",
                         "/slides",
                         "/activities",
                         "/categories",
@@ -51,7 +51,7 @@ public class SecurityConfiguration {
                 .antMatchers(GET, "/news").hasRole("ADMIN")
                 .antMatchers(PUT,"/slides/{id}").hasRole("ADMIN")
                 .antMatchers(DELETE,"/slides/{id}").hasRole("ADMIN")
-
+                .antMatchers(GET,"/users/me").hasAnyRole("ADMIN","USER")
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(STATELESS)

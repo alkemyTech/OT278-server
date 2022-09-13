@@ -4,6 +4,7 @@ import com.alkemy.ong.dto.comment.CommentRequestDto;
 import com.alkemy.ong.dto.comment.CommentResponseDto;
 import com.alkemy.ong.exception.ForbiddenException;
 import com.alkemy.ong.exception.NotFoundException;
+import com.alkemy.ong.exception.UnableToUpdateEntityException;
 import com.alkemy.ong.mapper.CommentMapper;
 import com.alkemy.ong.model.Comment;
 import com.alkemy.ong.security.auth.UserService;
@@ -53,19 +54,28 @@ public class CommentServiceImpl implements ICommentService {
     commentRepository.deleteById(id);
     }
 
-
-    //TODO to review as required
-    // @Override
+    @Override
     public CommentResponseDto update(Long id, CommentRequestDto edit,String auth) {
         UserResponseDto userResponseDto = userService.getLoggerUserData(auth);
         if (userResponseDto.getId() != commentRepository.getById(id).getUserId()){
-            throw new ForbiddenException(messageSource.getMessage("forbidden",null,Locale.US));
+            if (userResponseDto.getRole().getName().name() != "ADMIN"){
+                throw new ForbiddenException(messageSource.getMessage("forbidden",null,Locale.US));
+            }
         }
         Optional<Comment> exists = commentRepository.findById(id);
-        if (exists.isPresent()){
-            throw new NotFoundException(messageSource.getMessage("comment-not-found",null, Locale.US));
+        if (!exists.isPresent()){
+            throw new NotFoundException(messageSource.getMessage("not-found",new Object[]{id}, Locale.US));
+        }
+        try{
+            Comment comment = commentMapper.commentDto2Entity(edit);
+            comment.setId(id);
+            return commentMapper.entity2CommentDto(commentRepository.save(comment));
+        }catch (Exception e){
+            throw new UnableToUpdateEntityException(messageSource.getMessage("unable-to-update-entity",
+                    new Object[]{id},Locale.US));
         }
     }
+
     //TODO to review as required
     public Comment getCommentById(Long id) throws Exception {
         Optional<Comment> savedComment = commentRepository.findById(id);

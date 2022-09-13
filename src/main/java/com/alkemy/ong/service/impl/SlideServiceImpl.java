@@ -43,12 +43,6 @@ public class SlideServiceImpl implements ISlideService {
         return mapper.slideEntityList2DtoList(slides);
     }
 
-    @Override
-    public SlideResponseDto update(SlideRequestDto dto, Long id) {
-        return null;
-    }
-
-
     public SlideResponseDto create(SlideRequestDto dto) {
 
         Organization org = organizationRepository.findAll().get(0);
@@ -87,7 +81,7 @@ public class SlideServiceImpl implements ISlideService {
             throw new EmptyListException(messageSource.getMessage
                     ("slide.list.empty", null, Locale.ENGLISH));
         }
-        //Collections.sort(slides, Comparator.comparing(SlideResponseDTO::getPosition));
+        Collections.sort(slides, Comparator.comparing(SlideResponseDTO::getPosition));
 
         return slides;
     }
