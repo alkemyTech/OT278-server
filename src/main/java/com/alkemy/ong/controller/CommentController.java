@@ -4,10 +4,7 @@ import com.alkemy.ong.dto.comment.CommentBodyResponseDto;
 import com.alkemy.ong.dto.comment.CommentRequestDto;
 import com.alkemy.ong.dto.comment.CommentResponseDto;
 import com.alkemy.ong.service.ICommentService;
-<<<<<<< HEAD
-=======
 import com.alkemy.ong.service.impl.CommentServiceImpl;
->>>>>>> develop
 import lombok.RequiredArgsConstructor;
 
 import static org.springframework.http.HttpStatus.*;
@@ -36,15 +33,12 @@ public class CommentController {
     public ResponseEntity<CommentResponseDto> addNewComment(@RequestBody @Valid CommentRequestDto dto){
 
         return ResponseEntity.status(CREATED).body(service.save(dto));
-<<<<<<< HEAD
     }
 
     @GetMapping
     public ResponseEntity<List<CommentBodyResponseDto>> getAllCommentBodies(){
 
         return ResponseEntity.status(OK).body(service.getAllBodies());
-=======
->>>>>>> develop
     }
 
 }

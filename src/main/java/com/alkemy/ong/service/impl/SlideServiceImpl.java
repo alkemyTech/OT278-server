@@ -19,18 +19,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
-
-<<<<<<< HEAD
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-=======
 import java.time.LocalDateTime;
 import java.util.*;
->>>>>>> develop
-
-
 @Service
 @RequiredArgsConstructor
 public class SlideServiceImpl implements ISlideService {

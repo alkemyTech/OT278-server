@@ -3,33 +3,22 @@ package com.alkemy.ong.service.impl;
 import com.alkemy.ong.dto.comment.CommentBodyResponseDto;
 import com.alkemy.ong.dto.comment.CommentRequestDto;
 import com.alkemy.ong.dto.comment.CommentResponseDto;
-<<<<<<< HEAD
 import com.alkemy.ong.exception.EmptyListException;
-import com.alkemy.ong.mapper.CommentMapper;
-=======
 import com.alkemy.ong.exception.NotFoundException;
 import com.alkemy.ong.exception.UnableToUpdateEntityException;
 import com.alkemy.ong.mapper.GenericMapper;
->>>>>>> develop
 import com.alkemy.ong.model.Comment;
 import com.alkemy.ong.service.ICommentService;
 
 import lombok.RequiredArgsConstructor;
 
 import com.alkemy.ong.repository.CommentRepository;
-<<<<<<< HEAD
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
-=======
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
->>>>>>> develop
 import java.util.Locale;
 import java.util.Optional;
 
@@ -37,18 +26,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CommentServiceImpl implements ICommentService {
 
-<<<<<<< HEAD
-    private CommentRepository commentRepository;
-    private MessageSource messageSource;
-    private CommentMapper commentMapper;
-=======
-
     private final CommentRepository repository;
     private final GenericMapper mapper;
     private final MessageSource messageSource;
-
->>>>>>> develop
-
 
     @Override
     public CommentResponseDto save(CommentRequestDto commentRequestDto) {
@@ -93,10 +73,11 @@ public class CommentServiceImpl implements ICommentService {
 
     @Override
     public List<CommentBodyResponseDto> getAllBodies() {
-        if(commentRepository.findAllByOrderByNewsCreationDateAsc().isEmpty()){
+        List<Comment> bodies = repository.findAllByOrderByNewsCreationDateAsc();
+        if(bodies.isEmpty()){
             throw new EmptyListException(messageSource.getMessage("empty-list", null, Locale.US));
         }
-        return mapper.mapAll(commentRepository.findAllByOrderByNewsCreationDateAsc(), CommentBodyResponseDto.class);
+        return mapper.mapAll(bodies, CommentBodyResponseDto.class);
     }
 
 }
