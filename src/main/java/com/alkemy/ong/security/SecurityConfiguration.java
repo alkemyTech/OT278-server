@@ -27,6 +27,7 @@ public class SecurityConfiguration {
         http
                 .csrf().disable()
                 .authorizeRequests()
+
                 .antMatchers("/auth/*").permitAll()
 
                 .antMatchers("/users",
@@ -43,6 +44,15 @@ public class SecurityConfiguration {
                         "/configuration/**",
                         "/api/docs"
                 ).hasRole("DEVELOPER")
+                .antMatchers(
+                        "/users*",
+                        "/members/**",
+                        "/slides",
+                        "/activities",
+                        "/categories/**",
+                        "/news",
+                        "/testimonials/{id}"
+                ).hasRole("ADMIN")
                 .antMatchers(POST, "/testimonials").hasRole("ADMIN")
                 .antMatchers(PUT, "/testimonials/*").hasRole("ADMIN")
                 .antMatchers(POST, "/organization/public").hasRole("ADMIN")
@@ -52,6 +62,7 @@ public class SecurityConfiguration {
                 .antMatchers(PUT,"/slides/{id}").hasRole("ADMIN")
                 .antMatchers(DELETE,"/slides/{id}").hasRole("ADMIN")
                 .antMatchers(GET,"/users/me").hasAnyRole("ADMIN","USER")
+
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(STATELESS)
