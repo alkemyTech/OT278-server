@@ -17,7 +17,7 @@ public interface ICommentService {
     //TODO to review as required
     CommentResponseDto update(Long id, CommentRequestDto edit) throws Exception;
 
-    List<CommentBodyResponseDto> getAllBodies();
+    List<CommentBodyResponseDto> getAllCommentBodies();
 
 
 }

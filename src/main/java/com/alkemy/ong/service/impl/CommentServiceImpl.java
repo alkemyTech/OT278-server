@@ -72,7 +72,7 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public List<CommentBodyResponseDto> getAllBodies() {
+    public List<CommentBodyResponseDto> getAllCommentBodies() {
         List<Comment> bodies = repository.findAllByOrderByNewsCreationDateAsc();
         if(bodies.isEmpty()){
             throw new EmptyListException(messageSource.getMessage("empty-list", null, Locale.US));
