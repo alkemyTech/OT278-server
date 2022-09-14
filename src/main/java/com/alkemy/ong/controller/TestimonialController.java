@@ -2,6 +2,7 @@ package com.alkemy.ong.controller;
 
 import com.alkemy.ong.dto.testimonial.TestimonialRequestDto;
 import com.alkemy.ong.dto.testimonial.TestimonialResponseDto;
+import com.alkemy.ong.exception.CustomExceptionDetails;
 import com.alkemy.ong.service.ITestimonialService;
 
 import io.swagger.annotations.Api;
@@ -13,7 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.http.HttpStatus;
+import static org.springframework.http.HttpStatus.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,30 +34,68 @@ public class TestimonialController {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = TestimonialResponseDto.class))
             }),
             @ApiResponse(responseCode = "403", description = "FORBIDDEN - User not logged / User logged whitout ROLE_ADMIN", content = {
-                    @Content(mediaType = "application/json")
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = CustomExceptionDetails.class))
             }),
             @ApiResponse(responseCode = "500", description = "INTERNAL ERROR - Unable to save entity in the database.", content = {
-                    @Content(mediaType = "application/json")
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = CustomExceptionDetails.class))
             })
     })
     @PostMapping
+    @ResponseStatus(CREATED)
     public ResponseEntity<TestimonialResponseDto> save(
             @Valid @RequestBody @Parameter(description = "Request DTO for create a new Testimonial") TestimonialRequestDto testimonial) {
         TestimonialResponseDto savedTestimonial = service.save(testimonial);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedTestimonial);
+        return ResponseEntity.status(CREATED).body(savedTestimonial);
     }
 
+    @ApiOperation(value = "Update testimonial by ID", notes = "As an admin user, you can update an testimonial entering the ID and modifying the fields of the DTO")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK - The resource was found successfully", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = TestimonialResponseDto.class))
+            }),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST - Invalid ID", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = CustomExceptionDetails.class))
+            }),
+            @ApiResponse(responseCode = "403", description = "FORBIDDEN - User not logged / User logged whitout ROLE_ADMIN", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = CustomExceptionDetails.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "NOT FOUND - Resource not found with the ID entered", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = CustomExceptionDetails.class))
+            }),
+            @ApiResponse(responseCode = "500", description = "INTERNAL ERROR - Unable to update testimonial.", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = CustomExceptionDetails.class))
+            })
+    })
     @PutMapping("/{id}")
-    public ResponseEntity<TestimonialResponseDto> update(@Valid @RequestBody TestimonialRequestDto newTestimonial,
-            @PathVariable Long id) {
+    public ResponseEntity<TestimonialResponseDto> update( 
+        @Parameter(description = "Request DTO to update testimonial data") @Valid @RequestBody TestimonialRequestDto newTestimonial, 
+        @Parameter(description = "ID to find testimonial") @PathVariable Long id) {
         TestimonialResponseDto updatedTestimonial = service.update(newTestimonial, id);
         return ResponseEntity.ok(updatedTestimonial);
     }
 
+    @ApiOperation(value = "Delete(soft) testimonial by ID", notes = "As an admin user, you can delete(soft) an testimonial by his ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "DELETED - Resource has been successfully removed", content = {
+                    @Content(mediaType = "application/json")
+            }),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST - Invalid ID", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = CustomExceptionDetails.class))
+            }),
+            @ApiResponse(responseCode = "403", description = "FORBIDDEN - User not logged / User logged whitout ROLE_ADMIN", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = CustomExceptionDetails.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "NOT FOUND - Resource not found with the ID entered", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = CustomExceptionDetails.class))
+            }),
+            @ApiResponse(responseCode = "500", description = "INTERNAL ERROR - Unable to delete testimonial", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = CustomExceptionDetails.class))
+            })
+    })
     @DeleteMapping("/{id}")
-    public ResponseEntity delete(@PathVariable Long id) {
+    public ResponseEntity delete(@Parameter(description = "ID to find testimonial") @PathVariable Long id) {
         service.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(OK);
     }
 
 }
