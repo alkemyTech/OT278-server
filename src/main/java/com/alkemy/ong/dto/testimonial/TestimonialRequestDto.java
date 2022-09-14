@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
@@ -15,16 +16,17 @@ import java.io.Serializable;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel("Model Testimonial - Request")
 public class TestimonialRequestDto implements Serializable {
 
-    @ApiModelProperty(dataType = "String", allowEmptyValue = false, required = true, example = "Lucas testimony", position = 0)
+    @ApiModelProperty(value = "Testimonial name",dataType = "String", required = true, example = "Name testimony", position = 0)
     @NotBlank(message = "Name cannot be empty")
     private String name;
 
-    @ApiModelProperty(dataType = "String", required = false, example = "image-token.jpeg")
+    @ApiModelProperty(value = "Testimonial image", dataType = "String", example = "Image-url", position = 2)
     private String image;
 
-    @ApiModelProperty(dataType = "String", required = true, example = "Here is the testimonial of Lucas", position = 1)
+    @ApiModelProperty(value = "Testimonial content", dataType = "String", required = true, example = "Content of testimonial", position = 1)
     @NotBlank(message = "Content cannot be empty")
     private String content;
 }
