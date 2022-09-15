@@ -13,9 +13,7 @@ public interface ICommentService {
 
     //TODO to review as required
     void delete(Long id);
-
-    //TODO to review as required
-    CommentResponseDto update(Long id, CommentRequestDto edit) throws Exception;
+    CommentResponseDto update(Long id, CommentRequestDto edit,String auth);
 
     List<CommentBodyResponseDto> getAllCommentBodies();
 
