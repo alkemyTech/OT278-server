@@ -33,12 +33,8 @@ public class TestimonialController {
             @ApiResponse(responseCode = "201", description = "CREATED - Resource is fetched successfully", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = TestimonialResponseDto.class))
             }),
-            @ApiResponse(responseCode = "403", description = "FORBIDDEN - User not logged / User logged whitout ROLE_ADMIN", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = CustomExceptionDetails.class))
-            }),
-            @ApiResponse(responseCode = "500", description = "INTERNAL ERROR - Unable to save entity in the database.", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = CustomExceptionDetails.class))
-            })
+            @ApiResponse(responseCode = "403", description = "FORBIDDEN - User not logged / User logged whitout ROLE_ADMIN"),
+            @ApiResponse(responseCode = "500", description = "INTERNAL ERROR - Unable to save entity in the database.")
     })
     @PostMapping
     @ResponseStatus(CREATED)
@@ -53,18 +49,10 @@ public class TestimonialController {
             @ApiResponse(responseCode = "200", description = "OK - The resource was found successfully", content = {
                     @Content(mediaType = "application/json", schema = @Schema(implementation = TestimonialResponseDto.class))
             }),
-            @ApiResponse(responseCode = "400", description = "BAD REQUEST - Invalid ID", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = CustomExceptionDetails.class))
-            }),
-            @ApiResponse(responseCode = "403", description = "FORBIDDEN - User not logged / User logged whitout ROLE_ADMIN", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = CustomExceptionDetails.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "NOT FOUND - Resource not found with the ID entered", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = CustomExceptionDetails.class))
-            }),
-            @ApiResponse(responseCode = "500", description = "INTERNAL ERROR - Unable to update testimonial.", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = CustomExceptionDetails.class))
-            })
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST - Invalid ID"),
+            @ApiResponse(responseCode = "403", description = "FORBIDDEN - User not logged / User logged whitout ROLE_ADMIN"),
+            @ApiResponse(responseCode = "404", description = "NOT FOUND - Resource not found with the ID entered"),
+            @ApiResponse(responseCode = "500", description = "INTERNAL ERROR - Unable to update testimonial.")
     })
     @PutMapping("/{id}")
     public ResponseEntity<TestimonialResponseDto> update( 
@@ -79,18 +67,10 @@ public class TestimonialController {
             @ApiResponse(responseCode = "200", description = "DELETED - Resource has been successfully removed", content = {
                     @Content(mediaType = "application/json")
             }),
-            @ApiResponse(responseCode = "400", description = "BAD REQUEST - Invalid ID", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = CustomExceptionDetails.class))
-            }),
-            @ApiResponse(responseCode = "403", description = "FORBIDDEN - User not logged / User logged whitout ROLE_ADMIN", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = CustomExceptionDetails.class))
-            }),
-            @ApiResponse(responseCode = "404", description = "NOT FOUND - Resource not found with the ID entered", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = CustomExceptionDetails.class))
-            }),
-            @ApiResponse(responseCode = "500", description = "INTERNAL ERROR - Unable to delete testimonial", content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = CustomExceptionDetails.class))
-            })
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST - Invalid ID"),
+            @ApiResponse(responseCode = "403", description = "FORBIDDEN - User not logged / User logged whitout ROLE_ADMIN"),
+            @ApiResponse(responseCode = "404", description = "NOT FOUND - Resource not found with the ID entered"),
+            @ApiResponse(responseCode = "500", description = "INTERNAL ERROR - Unable to delete testimonial")
     })
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@Parameter(description = "ID to find testimonial") @PathVariable Long id) {

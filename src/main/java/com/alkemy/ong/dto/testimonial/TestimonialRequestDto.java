@@ -19,14 +19,14 @@ import java.io.Serializable;
 @ApiModel("Model Testimonial - Request")
 public class TestimonialRequestDto implements Serializable {
 
-    @ApiModelProperty(value = "Testimonial name",dataType = "String", required = true, example = "Name testimony", position = 0)
+    @ApiModelProperty(value = "Testimonial name",dataType = "String", required = true, example = "Name testimony")
     @NotBlank(message = "Name cannot be empty")
     private String name;
 
-    @ApiModelProperty(value = "Testimonial image", dataType = "String", example = "Image-url", position = 2)
+    @ApiModelProperty(value = "Testimonial image", dataType = "String", example = "Image-url")
     private String image;
 
-    @ApiModelProperty(value = "Testimonial content", dataType = "String", required = true, example = "Content of testimonial", position = 1)
+    @ApiModelProperty(value = "Testimonial content", dataType = "String", required = true, example = "Content of testimonial")
     @NotBlank(message = "Content cannot be empty")
     private String content;
 }
