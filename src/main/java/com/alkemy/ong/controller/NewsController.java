@@ -1,8 +1,12 @@
 package com.alkemy.ong.controller;
 
+
+import com.alkemy.ong.dto.comment.CommentBasicResponseDto;
 import com.alkemy.ong.dto.news.NewsRequestDto;
 import com.alkemy.ong.dto.news.NewsResponseDto;
 import com.alkemy.ong.exception.CustomExceptionDetails;
+import com.alkemy.ong.service.ICommentService;
+import com.alkemy.ong.dto.PageDto;
 import com.alkemy.ong.service.INewsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -10,11 +14,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/news")
@@ -22,6 +28,8 @@ import javax.validation.Valid;
 public class NewsController {
 
     private final INewsService service;
+    private final ICommentService commentService;
+
 
     @Operation(summary = "Get New by id.")
     @ApiResponses(value = {
@@ -38,6 +46,12 @@ public class NewsController {
     @GetMapping("/{id}")
     public ResponseEntity<NewsResponseDto> getById(@PathVariable Long id)  {
         return ResponseEntity.status(HttpStatus.OK).body(service.getById(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<PageDto<NewsResponseDto>> getPage(@RequestParam int page) {
+        PageDto<NewsResponseDto> pageDto = service.getPage(page);
+        return ResponseEntity.ok(pageDto);
     }
 
     @Operation(summary = "Create New.")
@@ -95,4 +109,11 @@ public class NewsController {
         NewsResponseDto newResponse = service.update(news, id);
         return new ResponseEntity<>(newResponse, HttpStatus.CREATED);
     }
+
+    @GetMapping("/{id}/comments")
+    public ResponseEntity<List<CommentBasicResponseDto>> getCommentsByNewsId(@Valid @PathVariable Long id){
+        List<CommentBasicResponseDto> comments = commentService.getAllCommentsByNewsId(id);
+        return ResponseEntity.status(HttpStatus.OK).body(comments);
+    }
+
 }
