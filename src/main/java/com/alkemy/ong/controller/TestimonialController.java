@@ -2,7 +2,8 @@ package com.alkemy.ong.controller;
 
 import com.alkemy.ong.dto.testimonial.TestimonialRequestDto;
 import com.alkemy.ong.dto.testimonial.TestimonialResponseDto;
-import com.alkemy.ong.exception.CustomExceptionDetails;
+import com.alkemy.ong.model.Testimonial;
+import com.alkemy.ong.repository.TestimonialRepository;
 import com.alkemy.ong.service.ITestimonialService;
 
 import io.swagger.annotations.Api;
@@ -13,8 +14,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-
-import static org.springframework.http.HttpStatus.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +30,7 @@ import javax.validation.Valid;
 public class TestimonialController {
 
     private final ITestimonialService service;
+    private final TestimonialRepository testimonialRepository;
 
     @ApiOperation(value = "Save a new Testimony", notes = "As an admin user, you can save a new testimonial")
     @ApiResponses(value = {
@@ -78,4 +82,8 @@ public class TestimonialController {
         return new ResponseEntity<>(OK);
     }
 
+    @GetMapping
+    public Page<Testimonial> getAll(@PageableDefault(page=0, size = 10)Pageable pageable) {
+        return testimonialRepository.findAll(pageable);
+    }
 }
