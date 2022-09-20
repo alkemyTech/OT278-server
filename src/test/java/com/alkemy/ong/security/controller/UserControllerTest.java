@@ -72,7 +72,7 @@ public class UserControllerTest {
                 .firstName("expectedValue")
                 .lastName("lastName")
                 .email("userDto@email.com")
-                .photo("photo.jpg")
+                .photo("token-url")
                 .role(role)
                 .build();
 
@@ -86,224 +86,167 @@ public class UserControllerTest {
 
         assertTrue(roleUserLogged.name().equalsIgnoreCase(RoleEnum.ADMIN.name()));
     }
-
     @Nested
     public class GetAllTest {
 
-        @Test    
-        void whenListIsNotEmpty_shouldReturnAll_status200() {
-            try {
-                users.add(userDto);
+        private final String ENDPOINT_URL = "/users";
 
-                when(service.getAll()).thenReturn(users);
+        @Test
+        void whenListIsNotEmpty_shouldReturnAll_status200() throws Exception {
+            users.add(userDto);
 
-                mockMvc.perform(get("/users")
-                        .contentType(APPLICATION_JSON))
-                        .andExpect(status().isOk())
-                        .andExpect(content().contentType(APPLICATION_JSON))
-                        .andExpect(jsonPath("$.[0:].firstName").value("expectedValue"));
+            when(service.getAll()).thenReturn(users);
 
-                verify(service).getAll();
+            mockMvc.perform(get(ENDPOINT_URL)
+                    .contentType(APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(jsonPath("$.[0:].firstName").value(userDto.getFirstName()));
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                // TODO: must be refactored..
-                fail("Logger messageSource");
-            }
+            verify(service).getAll();
         }
 
-        @Test       
-        void whenListIsEmpty_shouldThrowEmptyListException_status200() {
-            try {
-                when(service.getAll()).thenThrow(EmptyListException.class);
+        @Test
+        void whenListIsEmpty_shouldThrowEmptyListException_status200() throws Exception {
+            when(service.getAll()).thenThrow(EmptyListException.class);
 
-                mockMvc.perform(get("/users")
-                        .contentType(APPLICATION_JSON))
-                        .andExpect(status().isOk())
-                        .andExpect(content().contentType(APPLICATION_JSON))
-                        .andExpect(jsonPath("$.exception").value("EmptyListException"))
-                        .andExpect(jsonPath("$.path").value("/users"));
+            mockMvc.perform(get(ENDPOINT_URL)
+                    .contentType(APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(jsonPath("$.exception").value(EmptyListException.class.getSimpleName()))
+                    .andExpect(jsonPath("$.path").value(ENDPOINT_URL));
 
-                verify(service).getAll();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                // TODO: must be refactored..
-                fail("Logger messageSource");
-            }
+            verify(service).getAll();
         }
     }
 
     @Nested
     public class GetLoggerUserDataTest {
 
+        private final String ENDPOINT_URL = "/users/me";
+        private final String PARAM_NAME = "authorization";
+
         @ParameterizedTest
-        @ValueSource(strings = { "validToken" })        
-        void whenValidTokenEntered_shouldReturnDto_status200(String jwt) {
+        @ValueSource(strings = { "validToken" })
+        void whenValidTokenEntered_shouldReturnDto_status200(String jwt) throws Exception {
             assertEquals("validToken", jwt);
 
-            try {
-                UserResponseDto dto = UserResponseDto.builder()
-                        .id(1L)
-                        .firstName("firstName")
-                        .lastName("lastName")
-                        .email("userResponseDto@email.com")
-                        .photo("photo.jpg")
-                        .role(role)
-                        .token(jwt)
-                        .build();
+            UserResponseDto dto = UserResponseDto.builder()
+                    .id(1L)
+                    .firstName("firstName")
+                    .lastName("lastName")
+                    .email("userResponseDto@email.com")
+                    .photo("token-url")
+                    .role(role)
+                    .token(jwt)
+                    .build();
 
-                when(service.getLoggerUserData(jwt)).thenReturn(dto);
+            when(service.getLoggerUserData(jwt)).thenReturn(dto);
 
-                mockMvc.perform(get("/users/me").header("authorization", jwt)
-                        .contentType(APPLICATION_JSON)
-                        .content(jwt))
-                        .andExpect(status().isOk())
-                        .andExpect(content().contentType(APPLICATION_JSON))
-                        .andExpect(jsonPath("$.id").value(dto.getId()))
-                        .andExpect(jsonPath("$.firstName").value(dto.getFirstName()))
-                        .andExpect(jsonPath("$.lastName").value(dto.getLastName()))
-                        .andExpect(jsonPath("$.token").value(jwt))
-                        .andExpect(jsonPath("$.email").value(dto.getEmail()))
-                        .andExpect(jsonPath("$.photo").value(dto.getPhoto()))
-                        .andExpect(jsonPath("$.role.name").value(dto.getRole().getName().name()));
+            mockMvc.perform(get(ENDPOINT_URL).header(PARAM_NAME, jwt)
+                    .contentType(APPLICATION_JSON)
+                    .content(jwt))
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(jsonPath("$.id").value(dto.getId()))
+                    .andExpect(jsonPath("$.firstName").value(dto.getFirstName()))
+                    .andExpect(jsonPath("$.lastName").value(dto.getLastName()))
+                    .andExpect(jsonPath("$.token").value(jwt))
+                    .andExpect(jsonPath("$.email").value(dto.getEmail()))
+                    .andExpect(jsonPath("$.photo").value(dto.getPhoto()))
+                    .andExpect(jsonPath("$.role.name").value(dto.getRole().getName().name()));
 
-                verify(service).getLoggerUserData(jwt);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                // TODO: must be refactored..
-                fail("Logger messageSource");
-            }
+            verify(service).getLoggerUserData(jwt);
         }
 
         @ParameterizedTest
         @ValueSource(strings = { "invalidToken" })
-        void whenInvalidTokenEntered_shouldThrowForbiddenException_status403(String jwt) {
-
+        void whenInvalidTokenEntered_shouldThrowForbiddenException_status403(String jwt) throws Exception {
             assertEquals("invalidToken", jwt);
 
-            try {
-                when(service.getLoggerUserData(jwt)).thenThrow(ForbiddenException.class);
+            when(service.getLoggerUserData(jwt)).thenThrow(ForbiddenException.class);
 
-                mockMvc.perform(get("/users/me").header("authorization", jwt)
-                        .contentType(APPLICATION_JSON))
-                        .andExpect(status().isForbidden())
-                        .andExpect(content().contentType(APPLICATION_JSON))
-                        .andExpect(jsonPath("$.exception").value("ForbiddenException"))
-                        .andExpect(jsonPath("$.path").value("/users/me"));
+            mockMvc.perform(get(ENDPOINT_URL).header(PARAM_NAME, jwt)
+                    .contentType(APPLICATION_JSON))
+                    .andExpect(status().isForbidden())
+                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(jsonPath("$.exception").value(ForbiddenException.class.getSimpleName()))
+                    .andExpect(jsonPath("$.path").value(ENDPOINT_URL));
 
-                verify(service).getLoggerUserData(jwt);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                // TODO: must be refactored..
-                fail("Logger messageSource");
-            }
+            verify(service).getLoggerUserData(jwt);
         }
 
         @ParameterizedTest
         @EmptySource
-        @ValueSource(strings = {" ", "\t", "\n"})
-        void whenEmptyTokenEntered_shouldThrowBadRequestException_status400(String jwt) {
-
+        @ValueSource(strings = { " ", "\t", "\n" })
+        void whenEmptyTokenEntered_shouldThrowBadRequestException_status400(String jwt) throws Exception {
             assertTrue(jwt.trim().isEmpty());
 
-            try {
-                when(service.getLoggerUserData(jwt)).thenThrow(BadRequestException.class);
+            when(service.getLoggerUserData(jwt)).thenThrow(BadRequestException.class);
 
-                    mockMvc.perform(get("/users/me").header("authorization", jwt)
-                        .contentType(APPLICATION_JSON))
-                        .andExpect(status().isBadRequest())
-                        .andExpect(content().contentType(APPLICATION_JSON))
-                        .andExpect(jsonPath("$.exception").value("BadRequestException"))
-                        .andExpect(jsonPath("$.path").value("/users/me"));
+            mockMvc.perform(get(ENDPOINT_URL).header(PARAM_NAME, jwt)
+                    .contentType(APPLICATION_JSON))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(jsonPath("$.exception").value(BadRequestException.class.getSimpleName()))
+                    .andExpect(jsonPath("$.path").value(ENDPOINT_URL));
 
-                verify(service).getLoggerUserData(jwt);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                // TODO: must be refactored..
-                fail("Logger messageSource");
-            }
+            verify(service).getLoggerUserData(jwt);
         }
     }
 
     @Nested
     public class DeleteTest {
 
+        private final String ENDPOINT_URL = "/users/";
         private final long INVALID_ID = -2L;
         private final long TEST_ID = 00000000000001L;
         private final long VALID_ID = 123456L;
 
         @ParameterizedTest
         @ValueSource(longs = { VALID_ID, TEST_ID })
-        void whenValidIdEntered_shouldReturnStatus200(Long id) {
-
+        void whenValidIdEntered_shouldReturnStatus200(Long id) throws Exception {
             assertTrue(id > 0);
 
-            try {
-                when(service.delete(id)).thenReturn(true);
+            when(service.delete(id)).thenReturn(true);
 
-                mockMvc.perform(delete("/users/" + id))
-                        .andExpect(status().isOk());
+            mockMvc.perform(delete(ENDPOINT_URL + id))
+                    .andExpect(status().isOk());
 
-                verify(service).delete(id);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                // TODO: must be refactored..
-                fail("Logger messageSource");
-            }
+            verify(service).delete(id);
         }
 
         @ParameterizedTest
         @ValueSource(longs = { VALID_ID })
-        void whenValidIdEntered_butNotFound_shouldThrowNotFoundException_Status404(Long id) {
-
+        void whenValidIdEntered_butNotFound_shouldThrowNotFoundException_Status404(Long id) throws Exception {
             assertTrue(id > 0);
 
-            try {
-                when(service.delete(VALID_ID)).thenThrow(NotFoundException.class);
+            when(service.delete(VALID_ID)).thenThrow(NotFoundException.class);
 
-                mockMvc.perform(delete("/users/" + VALID_ID))
-                        .andExpect(status().isNotFound())
-                        .andExpect(content().contentType(APPLICATION_JSON))
-                        .andExpect(jsonPath("$.exception").value("NotFoundException"))
-                        .andExpect(jsonPath("$.path").value("/users/" + VALID_ID));
+            mockMvc.perform(delete(ENDPOINT_URL + VALID_ID))
+                    .andExpect(status().isNotFound())
+                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(jsonPath("$.exception").value(NotFoundException.class.getSimpleName()))
+                    .andExpect(jsonPath("$.path").value(ENDPOINT_URL + VALID_ID));
 
-                verify(service).delete(VALID_ID);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                // TODO: must be refactored..
-                fail("Logger messageSource");
-            }
+            verify(service).delete(VALID_ID);
         }
 
         @ParameterizedTest
         @ValueSource(longs = { INVALID_ID })
-        void whenInvalidIdEntered_shouldThrowBadRequestException_Status400(long id) {
-
+        void whenInvalidIdEntered_shouldThrowBadRequestException_Status400(long id) throws Exception {
             assertFalse(id > 0);
 
-            try {
-                when(service.delete(INVALID_ID)).thenThrow(BadRequestException.class);
+            when(service.delete(INVALID_ID)).thenThrow(BadRequestException.class);
 
-                mockMvc.perform(delete("/users/" + INVALID_ID))
-                        .andExpect(status().isBadRequest())
-                        .andExpect(content().contentType(APPLICATION_JSON))
-                        .andExpect(jsonPath("$.exception").value("BadRequestException"))
-                        .andExpect(jsonPath("$.path").value("/users/" + INVALID_ID));
+            mockMvc.perform(delete(ENDPOINT_URL + INVALID_ID))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(jsonPath("$.exception").value(BadRequestException.class.getSimpleName()))
+                    .andExpect(jsonPath("$.path").value(ENDPOINT_URL + INVALID_ID));
 
-                verify(service).delete(INVALID_ID);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                // TODO: must be refactored..
-                fail("Logger messageSource");
-            }
+            verify(service).delete(INVALID_ID);
         }
     }
-
 }
