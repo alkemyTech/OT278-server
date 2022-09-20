@@ -3,7 +3,6 @@ package com.alkemy.ong.security.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -13,54 +12,59 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EmptySource;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.context.annotation.FilterType;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import com.alkemy.ong.enums.RoleEnum;
 import com.alkemy.ong.exception.BadRequestException;
 import com.alkemy.ong.exception.EmptyListException;
 import com.alkemy.ong.exception.ForbiddenException;
 import com.alkemy.ong.exception.NotFoundException;
-import com.alkemy.ong.security.SecurityConfiguration;
 import com.alkemy.ong.security.auth.UserService;
 import com.alkemy.ong.security.dto.UserDto;
 import com.alkemy.ong.security.dto.UserResponseDto;
-import com.alkemy.ong.security.jwt.JwtRequestFilter;
 import com.alkemy.ong.security.model.Role;
 
-@WebMvcTest(value = UserController.class, excludeFilters = {
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
-                SecurityConfiguration.class,
-                JwtRequestFilter.class }) }, excludeAutoConfiguration = { SecurityAutoConfiguration.class })
+@SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@TestPropertySource(locations = "")                
 public class UserControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private WebApplicationContext wac;
 
     @MockBean
     private UserService service;
 
-    private static List<UserDto> users;
-    private static UserDto userDto;
-    private static Role role;
+    private MockMvc mockMvc;
+    private List<UserDto> users;
+    private UserDto userDto;
+    private Role role;
 
-    @BeforeAll
-    static void init() {
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+                                .alwaysExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))                                
+                                .apply(springSecurity())
+                                .build();
+
         role = new Role(1L,
                 RoleEnum.ADMIN,
                 "description",
@@ -78,20 +82,13 @@ public class UserControllerTest {
 
         users = new ArrayList<>();
     }
-
-    @Order(1)
-    @ParameterizedTest
-    @EnumSource(value = RoleEnum.class, names = { "ADMIN" })
-    void testUserController_WhenUserRoleIsNotAdmin_ShouldThrowForbiddenException(RoleEnum roleUserLogged) {
-
-        assertTrue(roleUserLogged.name().equalsIgnoreCase(RoleEnum.ADMIN.name()));
-    }
     @Nested
     public class GetAllTest {
 
         private final String ENDPOINT_URL = "/users";
 
         @Test
+        @WithMockUser(roles = { "ADMIN" })
         void whenListIsNotEmpty_shouldReturnAll_status200() throws Exception {
             users.add(userDto);
 
@@ -99,21 +96,21 @@ public class UserControllerTest {
 
             mockMvc.perform(get(ENDPOINT_URL)
                     .contentType(APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andExpect(content().contentType(APPLICATION_JSON))
+                    .andExpect(status().isOk())                    
                     .andExpect(jsonPath("$.[0:].firstName").value(userDto.getFirstName()));
 
             verify(service).getAll();
         }
 
         @Test
+        @WithMockUser(roles = { "ADMIN" })
         void whenListIsEmpty_shouldThrowEmptyListException_status200() throws Exception {
+            
             when(service.getAll()).thenThrow(EmptyListException.class);
 
             mockMvc.perform(get(ENDPOINT_URL)
                     .contentType(APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(content().contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.exception").value(EmptyListException.class.getSimpleName()))
                     .andExpect(jsonPath("$.path").value(ENDPOINT_URL));
 
@@ -128,8 +125,10 @@ public class UserControllerTest {
         private final String PARAM_NAME = "authorization";
 
         @ParameterizedTest
+        @WithMockUser(roles = { "ADMIN" })
         @ValueSource(strings = { "validToken" })
         void whenValidTokenEntered_shouldReturnDto_status200(String jwt) throws Exception {
+            
             assertEquals("validToken", jwt);
 
             UserResponseDto dto = UserResponseDto.builder()
@@ -148,7 +147,6 @@ public class UserControllerTest {
                     .contentType(APPLICATION_JSON)
                     .content(jwt))
                     .andExpect(status().isOk())
-                    .andExpect(content().contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.id").value(dto.getId()))
                     .andExpect(jsonPath("$.firstName").value(dto.getFirstName()))
                     .andExpect(jsonPath("$.lastName").value(dto.getLastName()))
@@ -161,8 +159,10 @@ public class UserControllerTest {
         }
 
         @ParameterizedTest
+        @WithMockUser(roles = { "ADMIN" })
         @ValueSource(strings = { "invalidToken" })
         void whenInvalidTokenEntered_shouldThrowForbiddenException_status403(String jwt) throws Exception {
+            
             assertEquals("invalidToken", jwt);
 
             when(service.getLoggerUserData(jwt)).thenThrow(ForbiddenException.class);
@@ -170,7 +170,6 @@ public class UserControllerTest {
             mockMvc.perform(get(ENDPOINT_URL).header(PARAM_NAME, jwt)
                     .contentType(APPLICATION_JSON))
                     .andExpect(status().isForbidden())
-                    .andExpect(content().contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.exception").value(ForbiddenException.class.getSimpleName()))
                     .andExpect(jsonPath("$.path").value(ENDPOINT_URL));
 
@@ -178,9 +177,11 @@ public class UserControllerTest {
         }
 
         @ParameterizedTest
+        @WithMockUser(roles = { "ADMIN" })
         @EmptySource
         @ValueSource(strings = { " ", "\t", "\n" })
         void whenEmptyTokenEntered_shouldThrowBadRequestException_status400(String jwt) throws Exception {
+            
             assertTrue(jwt.trim().isEmpty());
 
             when(service.getLoggerUserData(jwt)).thenThrow(BadRequestException.class);
@@ -188,7 +189,6 @@ public class UserControllerTest {
             mockMvc.perform(get(ENDPOINT_URL).header(PARAM_NAME, jwt)
                     .contentType(APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
-                    .andExpect(content().contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.exception").value(BadRequestException.class.getSimpleName()))
                     .andExpect(jsonPath("$.path").value(ENDPOINT_URL));
 
@@ -205,8 +205,10 @@ public class UserControllerTest {
         private final long VALID_ID = 123456L;
 
         @ParameterizedTest
+        @WithMockUser(roles = { "ADMIN" })
         @ValueSource(longs = { VALID_ID, TEST_ID })
         void whenValidIdEntered_shouldReturnStatus200(Long id) throws Exception {
+           
             assertTrue(id > 0);
 
             when(service.delete(id)).thenReturn(true);
@@ -218,15 +220,16 @@ public class UserControllerTest {
         }
 
         @ParameterizedTest
+        @WithMockUser(roles = { "ADMIN" })
         @ValueSource(longs = { VALID_ID })
         void whenValidIdEntered_butNotFound_shouldThrowNotFoundException_Status404(Long id) throws Exception {
+            
             assertTrue(id > 0);
 
             when(service.delete(VALID_ID)).thenThrow(NotFoundException.class);
 
             mockMvc.perform(delete(ENDPOINT_URL + VALID_ID))
                     .andExpect(status().isNotFound())
-                    .andExpect(content().contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.exception").value(NotFoundException.class.getSimpleName()))
                     .andExpect(jsonPath("$.path").value(ENDPOINT_URL + VALID_ID));
 
@@ -234,15 +237,16 @@ public class UserControllerTest {
         }
 
         @ParameterizedTest
+        @WithMockUser(roles = { "ADMIN" })
         @ValueSource(longs = { INVALID_ID })
         void whenInvalidIdEntered_shouldThrowBadRequestException_Status400(long id) throws Exception {
+            
             assertFalse(id > 0);
 
             when(service.delete(INVALID_ID)).thenThrow(BadRequestException.class);
 
             mockMvc.perform(delete(ENDPOINT_URL + INVALID_ID))
                     .andExpect(status().isBadRequest())
-                    .andExpect(content().contentType(APPLICATION_JSON))
                     .andExpect(jsonPath("$.exception").value(BadRequestException.class.getSimpleName()))
                     .andExpect(jsonPath("$.path").value(ENDPOINT_URL + INVALID_ID));
 
