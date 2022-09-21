@@ -3,7 +3,6 @@ package com.alkemy.ong.controller;
 import com.alkemy.ong.dto.contact.ContactRequestDto;
 import com.alkemy.ong.dto.contact.ContactResponseDto;
 import com.alkemy.ong.mapper.GenericMapper;
-import com.alkemy.ong.model.Contact;
 import com.alkemy.ong.service.IContactService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
