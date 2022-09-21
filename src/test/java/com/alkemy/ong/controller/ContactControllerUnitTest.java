@@ -153,7 +153,6 @@ public class ContactControllerUnitTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     void getAllContactsAdmin200() throws Exception {
-        //Add User to avoid empty list exception
         when(service.findAll()).thenReturn(mapper.mapAll(contactDtoList, ContactResponseDto.class));
         mockMvc.perform(get("/contacts")
                         .contentType(APPLICATION_JSON)
