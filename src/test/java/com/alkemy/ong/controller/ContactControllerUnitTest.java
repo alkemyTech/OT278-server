@@ -11,14 +11,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +76,7 @@ public class ContactControllerUnitTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     void createContactAdmin201() throws Exception {
-        when(service.save(contactDto)).thenReturn(mapper.map(contact, ContactResponseDto.class));
+        when(service.save(contactDto)).thenReturn(mapper.map(contactDto, ContactResponseDto.class));
         mockMvc.perform(post("/contacts")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(contactDto))
@@ -90,7 +88,7 @@ public class ContactControllerUnitTest {
     @Test
     @WithMockUser(roles = "USER")
     void createContactUser201() throws Exception {
-        when(service.save(contactDto)).thenReturn(mapper.map(contact, ContactResponseDto.class));
+        when(service.save(contactDto)).thenReturn(mapper.map(contactDto, ContactResponseDto.class));
         mockMvc.perform(post("/contacts")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(contactDto))
@@ -99,7 +97,6 @@ public class ContactControllerUnitTest {
                 .andExpect(status().isCreated());
     }
 
-
     @Test
     void createContactFailBecauseUserNotAuthenticated() throws Exception {
         mockMvc.perform(post("/contacts")
@@ -107,6 +104,58 @@ public class ContactControllerUnitTest {
                         .content(objectMapper.writeValueAsString(contactDto))
                         .with(csrf()))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void createContactAdminWithIncorrectName500() throws Exception {
+        ContactRequestDto contactDto1 = new ContactRequestDto(null, "864534", "ab1@example.com", "message");
+        when(service.save(contactDto1)).thenReturn(mapper.map(contactDto1, ContactResponseDto.class));
+        mockMvc.perform(post("/contacts")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(contactDto1))
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf()))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void createContactUserWithIncorrectName500() throws Exception {
+        ContactRequestDto contactDto1 = new ContactRequestDto(null, "864534", "ab1@example.com", "message");
+        when(service.save(contactDto1)).thenReturn(mapper.map(contactDto1, ContactResponseDto.class));
+        mockMvc.perform(post("/contacts")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(contactDto1))
+                        .with(user("user").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void createContactAdminWithIncorrectEmail500() throws Exception {
+        ContactRequestDto contactDto2 = new ContactRequestDto("name", "8783435", "35/4@a|d/$#j", "message2");
+        when(service.save(contactDto2)).thenReturn(mapper.map(contactDto2, ContactResponseDto.class));
+        mockMvc.perform(post("/contacts")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(contactDto2))
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf()))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void createContactUserWithIncorrectEmail500() throws Exception {
+        ContactRequestDto contactDto2 = new ContactRequestDto("name", "8783435", "35/4@a|d/$#j", "message2");
+        when(service.save(contactDto2)).thenReturn(mapper.map(contactDto2, ContactResponseDto.class));
+        mockMvc.perform(post("/contacts")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(contactDto2))
+                        .with(user("user").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().isInternalServerError());
     }
 
     @Test
