@@ -50,7 +50,7 @@ public class SecurityConfiguration {
                 .antMatchers(PUT, "/**").hasRole("ADMIN")
                 .antMatchers(DELETE, "/**").hasRole("ADMIN")
 
-
+                /*
                 .antMatchers("/users",
                         "/slides",
                         "/activities",
@@ -84,7 +84,7 @@ public class SecurityConfiguration {
                 .antMatchers(PUT,"/slides/{id}").hasRole("ADMIN")
                 .antMatchers(DELETE,"/slides/{id}").hasRole("ADMIN")
                 .antMatchers(GET,"/users/me").hasAnyRole("ADMIN","USER")
-
+                */
 
                 .anyRequest().authenticated()
                 .and()

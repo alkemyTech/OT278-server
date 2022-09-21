@@ -155,6 +155,7 @@ public class ContactControllerUnitTest {
         when(service.findAll()).thenReturn(mapper.mapAll(contactDtoList, ContactResponseDto.class));
         mockMvc.perform(get("/contacts")
                         .contentType(APPLICATION_JSON)
+                        .with(user("admin").roles("ADMIN"))
                         .with(csrf()))
                 .andExpect(status().isOk());
     }
