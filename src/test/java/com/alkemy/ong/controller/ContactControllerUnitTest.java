@@ -99,15 +99,15 @@ public class ContactControllerUnitTest {
                 .andExpect(status().isCreated());
     }
 
-    /*
+
     @Test
     void createContactFailBecauseUserNotAuthenticated() throws Exception {
         mockMvc.perform(post("/contacts")
                         .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(contactDto))
                         .with(csrf()))
                 .andExpect(status().isForbidden());
-    } //TODO: review, it returns 500 instead of 403.
-    **/
+    }
 
     @Test
     @WithMockUser(roles = "ADMIN")

@@ -78,7 +78,7 @@ public class SecurityConfiguration {
                 .antMatchers(POST, "/testimonials").hasRole("ADMIN")
                 .antMatchers(PUT, "/testimonials/*").hasRole("ADMIN")
                 .antMatchers(POST, "/organization/public").hasRole("ADMIN")
-                .antMatchers(POST, "/contacts").permitAll()
+                .antMatchers(POST, "/contacts").hasAnyRole("ADMIN","USER")
                 .antMatchers(GET, "/contacts").hasRole("ADMIN")
                 .antMatchers(GET, "/news").hasRole("ADMIN")
                 .antMatchers(PUT,"/slides/{id}").hasRole("ADMIN")
