@@ -46,7 +46,6 @@ public class ContactControllerUnitTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    private Contact contact;
     private ContactRequestDto contactDto;
 
     List<ContactRequestDto> contactDtoList = new ArrayList<>();
@@ -56,13 +55,6 @@ public class ContactControllerUnitTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(springSecurity())
                 .build();
-
-        contact = new Contact();
-        contact.setId(1L);
-        contact.setName("Gian");
-        contact.setPhone("12345678910");
-        contact.setEmail("example@gmail.com");
-        contact.setMessage("description");
 
         contactDto = new ContactRequestDto();
         contactDto.setName("name");
