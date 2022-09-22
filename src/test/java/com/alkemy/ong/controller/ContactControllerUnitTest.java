@@ -43,7 +43,7 @@ public class ContactControllerUnitTest {
     @Autowired
     private GenericMapper mapper;
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     private ContactRequestDto contactDto;
 
