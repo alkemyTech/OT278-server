@@ -1,8 +1,7 @@
 package com.alkemy.ong.security.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -10,6 +9,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import static java.util.Collections.singletonList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -18,9 +19,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
+import static org.springframework.boot.autoconfigure.security.SecurityProperties.User;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -28,23 +36,36 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor;
 
 import com.alkemy.ong.enums.RoleEnum;
 import com.alkemy.ong.exception.BadRequestException;
 import com.alkemy.ong.exception.EmptyListException;
 import com.alkemy.ong.exception.ForbiddenException;
 import com.alkemy.ong.exception.NotFoundException;
+import com.alkemy.ong.mapper.GenericMapper;
 import com.alkemy.ong.security.auth.UserService;
 import com.alkemy.ong.security.dto.UserDto;
+import com.alkemy.ong.security.dto.UserRequestDto;
 import com.alkemy.ong.security.dto.UserResponseDto;
 import com.alkemy.ong.security.model.Role;
+import com.alkemy.ong.security.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.notNullValue;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@TestPropertySource(locations = "")                
+@TestPropertySource(locations = "")
 public class UserControllerTest {
 
     @Autowired
@@ -55,15 +76,17 @@ public class UserControllerTest {
 
     private MockMvc mockMvc;
     private List<UserDto> users;
-    private UserDto userDto;
+    private UserDto userOne;
+    private UserDto userTwo;
     private Role role;
 
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac)
-                                .alwaysExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))                                
-                                .apply(springSecurity())
-                                .build();
+                .defaultRequest(get("/").with(user("user").roles("ADMIN")))
+                .alwaysExpect(content().contentTypeCompatibleWith(APPLICATION_JSON))
+                .apply(springSecurity())
+                .build();
 
         role = new Role(1L,
                 RoleEnum.ADMIN,
@@ -71,33 +94,49 @@ public class UserControllerTest {
                 LocalDateTime.now(),
                 LocalDateTime.now());
 
-        userDto = UserDto.builder()
+        userOne = UserDto.builder()
                 .id(1L)
-                .firstName("expectedValue")
-                .lastName("lastName")
-                .email("userDto@email.com")
+                .firstName("firstName1")
+                .lastName("lastName1")
+                .email("userOne@email.com")
+                .photo("token-url")
+                .role(role)
+                .build();
+
+        userTwo = UserDto.builder()
+                .id(2L)
+                .firstName("firstName2")
+                .lastName("lastName2")
+                .email("userTwo@email.com")
                 .photo("token-url")
                 .role(role)
                 .build();
 
         users = new ArrayList<>();
     }
+
     @Nested
     public class GetAllTest {
 
         private final String ENDPOINT_URL = "/users";
 
         @Test
-        @WithMockUser(roles = { "ADMIN" })
+        @WithMockUser(username = "user", roles = { "ADMIN" })
         void whenListIsNotEmpty_shouldReturnAll_status200() throws Exception {
-            users.add(userDto);
+            users.add(userOne);
+            users.add(userTwo);
 
             when(service.getAll()).thenReturn(users);
 
             mockMvc.perform(get(ENDPOINT_URL)
-                    .contentType(APPLICATION_JSON))
-                    .andExpect(status().isOk())                    
-                    .andExpect(jsonPath("$.[0:].firstName").value(userDto.getFirstName()));
+                        .contentType(APPLICATION_JSON)
+                        .with(user("user").roles("ADMIN")))
+                    .andExpect(jsonPath("@", hasSize(users.size())))
+                    .andExpect(jsonPath("$.[0].firstName").value(userOne.getFirstName()))
+                    .andExpect(jsonPath("$.[0].lastName").value(userOne.getLastName()))
+                    .andExpect(jsonPath("$.[0].email").value(userOne.getEmail()))
+                    .andExpect(jsonPath("$.[0].role").value(notNullValue()))
+                    .andExpect(status().isOk());
 
             verify(service).getAll();
         }
@@ -105,7 +144,7 @@ public class UserControllerTest {
         @Test
         @WithMockUser(roles = { "ADMIN" })
         void whenListIsEmpty_shouldThrowEmptyListException_status200() throws Exception {
-            
+
             when(service.getAll()).thenThrow(EmptyListException.class);
 
             mockMvc.perform(get(ENDPOINT_URL)
@@ -116,6 +155,7 @@ public class UserControllerTest {
 
             verify(service).getAll();
         }
+
     }
 
     @Nested
@@ -128,7 +168,7 @@ public class UserControllerTest {
         @WithMockUser(roles = { "ADMIN" })
         @ValueSource(strings = { "validToken" })
         void whenValidTokenEntered_shouldReturnDto_status200(String jwt) throws Exception {
-            
+
             assertEquals("validToken", jwt);
 
             UserResponseDto dto = UserResponseDto.builder()
@@ -162,7 +202,7 @@ public class UserControllerTest {
         @WithMockUser(roles = { "ADMIN" })
         @ValueSource(strings = { "invalidToken" })
         void whenInvalidTokenEntered_shouldThrowForbiddenException_status403(String jwt) throws Exception {
-            
+
             assertEquals("invalidToken", jwt);
 
             when(service.getLoggerUserData(jwt)).thenThrow(ForbiddenException.class);
@@ -181,7 +221,7 @@ public class UserControllerTest {
         @EmptySource
         @ValueSource(strings = { " ", "\t", "\n" })
         void whenEmptyTokenEntered_shouldThrowBadRequestException_status400(String jwt) throws Exception {
-            
+
             assertTrue(jwt.trim().isEmpty());
 
             when(service.getLoggerUserData(jwt)).thenThrow(BadRequestException.class);
@@ -208,7 +248,7 @@ public class UserControllerTest {
         @WithMockUser(roles = { "ADMIN" })
         @ValueSource(longs = { VALID_ID, TEST_ID })
         void whenValidIdEntered_shouldReturnStatus200(Long id) throws Exception {
-           
+
             assertTrue(id > 0);
 
             when(service.delete(id)).thenReturn(true);
@@ -223,7 +263,7 @@ public class UserControllerTest {
         @WithMockUser(roles = { "ADMIN" })
         @ValueSource(longs = { VALID_ID })
         void whenValidIdEntered_butNotFound_shouldThrowNotFoundException_Status404(Long id) throws Exception {
-            
+
             assertTrue(id > 0);
 
             when(service.delete(VALID_ID)).thenThrow(NotFoundException.class);
@@ -240,7 +280,7 @@ public class UserControllerTest {
         @WithMockUser(roles = { "ADMIN" })
         @ValueSource(longs = { INVALID_ID })
         void whenInvalidIdEntered_shouldThrowBadRequestException_Status400(long id) throws Exception {
-            
+
             assertFalse(id > 0);
 
             when(service.delete(INVALID_ID)).thenThrow(BadRequestException.class);

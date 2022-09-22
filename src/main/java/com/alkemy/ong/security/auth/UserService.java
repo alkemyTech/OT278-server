@@ -1,6 +1,7 @@
 package com.alkemy.ong.security.auth;
 
 import com.alkemy.ong.exception.AlreadyExistsException;
+import com.alkemy.ong.exception.BadRequestException;
 import com.alkemy.ong.exception.EmptyListException;
 import com.alkemy.ong.exception.NotFoundException;
 import com.alkemy.ong.exception.NotLoggedUserException;
@@ -98,6 +99,9 @@ public class UserService {
     }
 
     public UserResponseDto getLoggerUserData(String auth) {
+        if(auth.trim().isEmpty()){
+            throw new BadRequestException(messageSource.getMessage("invalid-token", null, Locale.US));
+        }
         String jwt = auth.substring(7);
         User user = repository.findByEmail(jwtUtils.extractUsername(jwt));
         return mapper.map(user, UserResponseDto.class);
