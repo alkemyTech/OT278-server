@@ -1,7 +1,6 @@
 package com.alkemy.ong.security.controller;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -9,26 +8,16 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import static java.util.Collections.singletonList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
-import static org.springframework.boot.autoconfigure.security.SecurityProperties.User;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -36,30 +25,21 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.UserRequestPostProcessor;
 
 import com.alkemy.ong.enums.RoleEnum;
 import com.alkemy.ong.exception.BadRequestException;
 import com.alkemy.ong.exception.EmptyListException;
 import com.alkemy.ong.exception.ForbiddenException;
 import com.alkemy.ong.exception.NotFoundException;
-import com.alkemy.ong.mapper.GenericMapper;
 import com.alkemy.ong.security.auth.UserService;
 import com.alkemy.ong.security.dto.UserDto;
-import com.alkemy.ong.security.dto.UserRequestDto;
 import com.alkemy.ong.security.dto.UserResponseDto;
 import com.alkemy.ong.security.model.Role;
-import com.alkemy.ong.security.repository.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 
@@ -211,25 +191,6 @@ public class UserControllerTest {
                     .contentType(APPLICATION_JSON))
                     .andExpect(status().isForbidden())
                     .andExpect(jsonPath("$.exception").value(ForbiddenException.class.getSimpleName()))
-                    .andExpect(jsonPath("$.path").value(ENDPOINT_URL));
-
-            verify(service).getLoggerUserData(jwt);
-        }
-
-        @ParameterizedTest
-        @WithMockUser(roles = { "ADMIN" })
-        @EmptySource
-        @ValueSource(strings = { " ", "\t", "\n" })
-        void whenEmptyTokenEntered_shouldThrowBadRequestException_status400(String jwt) throws Exception {
-
-            assertTrue(jwt.trim().isEmpty());
-
-            when(service.getLoggerUserData(jwt)).thenThrow(BadRequestException.class);
-
-            mockMvc.perform(get(ENDPOINT_URL).header(PARAM_NAME, jwt)
-                    .contentType(APPLICATION_JSON))
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.exception").value(BadRequestException.class.getSimpleName()))
                     .andExpect(jsonPath("$.path").value(ENDPOINT_URL));
 
             verify(service).getLoggerUserData(jwt);
