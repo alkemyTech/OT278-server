@@ -4,6 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import static org.springframework.http.HttpStatus.*;
 
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
@@ -67,7 +69,9 @@ public class HandlerExceptionController {
             MethodArgumentNotValidException.class,
             NullPointerException.class,
             IllegalArgumentException.class,
-            IndexOutOfBoundsException.class
+            IndexOutOfBoundsException.class,
+            UsernameNotFoundException.class,
+            BadCredentialsException.class
     })
     @ResponseBody
     public CustomExceptionDetails badRequest(HttpServletRequest request, Exception exception) {

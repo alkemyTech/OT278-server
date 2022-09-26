@@ -1,4 +1,4 @@
-package com.alkemy.ong.controller;
+package com.alkemy.ong.endpoints.unit.controller;
 
 import com.alkemy.ong.dto.activity.ActivityRequestDTO;
 import com.alkemy.ong.dto.activity.ActivityResponseDTO;
