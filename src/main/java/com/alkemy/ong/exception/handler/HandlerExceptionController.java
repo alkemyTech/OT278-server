@@ -64,7 +64,10 @@ public class HandlerExceptionController {
             ArithmeticException.class,
             MissingRequestHeaderException.class,
             RequestRejectedException.class,
-            MethodArgumentNotValidException.class
+            MethodArgumentNotValidException.class,
+            NullPointerException.class,
+            IllegalArgumentException.class,
+            IndexOutOfBoundsException.class
     })
     @ResponseBody
     public CustomExceptionDetails badRequest(HttpServletRequest request, Exception exception) {

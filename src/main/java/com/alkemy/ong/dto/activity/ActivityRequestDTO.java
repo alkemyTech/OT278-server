@@ -20,17 +20,4 @@ public class ActivityRequestDTO {
     private String content;
     @NotEmpty(message = "the image cannot be empty")
     private String image;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ActivityRequestDTO)) return false;
-        ActivityRequestDTO that = (ActivityRequestDTO) o;
-        return getName().equals(that.getName());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getName());
-    }
 }
